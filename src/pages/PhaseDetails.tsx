@@ -9,6 +9,7 @@ function PhaseDetails() {
   const phaseData = {
     1: {
       trees: 5000,
+      hectares: 4.2,
       species: [
         { name: "Ceriops tagal", trees: 1500 },
         { name: "Rhizophora mucronata", trees: 1500 },
@@ -18,6 +19,7 @@ function PhaseDetails() {
     },
     2: {
       trees: 6000,
+      hectares: 5.0,
       species: [
         { name: "Ceriops tagal", trees: 1500 },
         { name: "Rhizophora mucronata", trees: 2000 },
@@ -27,6 +29,7 @@ function PhaseDetails() {
     },
     3: {
       trees: 4000,
+      hectares: 3.3,
       species: [
         { name: "Ceriops tagal", trees: 1000 },
         { name: "Rhizophora mucronata", trees: 1000 },
@@ -34,7 +37,7 @@ function PhaseDetails() {
         { name: "Bruguiera gymnorrhiza", trees: 1000 }
       ]
     }
-  }[id as string] || { trees: 0, species: [] };
+  }[id as string] || { trees: 0, hectares: 0, species: [] };
 
   return (
     <div className="min-h-screen bg-slate-900 text-white">
@@ -56,10 +59,14 @@ function PhaseDetails() {
 
       <div className="container mx-auto px-4 pt-24">
         <div className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm border border-slate-700/50">
-          <div className="mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="bg-slate-700/30 rounded-lg p-6">
               <h3 className="text-xl font-semibold mb-2">Total Trees Planted</h3>
               <p className="text-4xl font-bold text-emerald-400">{phaseData.trees.toLocaleString()}</p>
+            </div>
+            <div className="bg-slate-700/30 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-2">Total Area Planted</h3>
+              <p className="text-4xl font-bold text-emerald-400">{phaseData.hectares.toLocaleString()} ha</p>
             </div>
           </div>
 

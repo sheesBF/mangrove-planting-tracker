@@ -7,6 +7,7 @@ function ProjectDetails() {
 
   const projectData = {
     totalTrees: 15000,
+    totalHectares: 12.5,
     species: [
       { name: "Ceriops tagal", trees: 4000 },
       { name: "Rhizophora mucronata", trees: 4500 },
@@ -40,10 +41,14 @@ function ProjectDetails() {
 
       <div className="container mx-auto px-4 pt-24">
         <div className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm border border-slate-700/50">
-          <div className="mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="bg-slate-700/30 rounded-lg p-6">
               <h3 className="text-xl font-semibold mb-2">Total Trees Planted</h3>
               <p className="text-4xl font-bold text-emerald-400">{projectData.totalTrees.toLocaleString()}</p>
+            </div>
+            <div className="bg-slate-700/30 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-2">Total Area Planted</h3>
+              <p className="text-4xl font-bold text-emerald-400">{projectData.totalHectares.toLocaleString()} ha</p>
             </div>
           </div>
 
