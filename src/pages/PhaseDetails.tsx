@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trees as Tree, ArrowLeft } from 'lucide-react';
+import { Trees as Tree, ArrowLeft, BarChart } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 function PhaseDetails() {
@@ -47,13 +47,22 @@ function PhaseDetails() {
             <Tree className="h-6 w-6 text-emerald-400" />
             <h1 className="text-xl font-semibold tracking-tight">Phase {id} Details</h1>
           </div>
-          <button
-            onClick={() => navigate('/tracking')}
-            className="flex items-center space-x-2 text-emerald-400 hover:text-emerald-300 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back to Tracking</span>
-          </button>
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => navigate(`/monthly/${id}`)}
+              className="flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded-lg transition-colors"
+            >
+              <BarChart className="h-4 w-4" />
+              <span>Monthly</span>
+            </button>
+            <button
+              onClick={() => navigate('/tracking')}
+              className="flex items-center space-x-2 text-emerald-400 hover:text-emerald-300 transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back to Tracking</span>
+            </button>
+          </div>
         </div>
       </header>
 
