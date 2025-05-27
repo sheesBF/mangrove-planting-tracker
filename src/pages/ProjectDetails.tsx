@@ -22,7 +22,7 @@ function ProjectDetails() {
         .select(`
           planned_trees,
           planned_hectares,
-          phases!inner(
+          phases (
             id,
             phase_number
           )
