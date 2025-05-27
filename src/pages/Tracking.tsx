@@ -74,42 +74,8 @@ function Tracking() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 pt-24 pb-12">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-slate-800/50 rounded-xl p-8 backdrop-blur-sm border border-slate-700/50 mb-8">
-            <h2 className="text-2xl font-bold mb-6">Project Overview</h2>
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <div className="mb-4">
-                  <p className="text-sm text-white/70">Planned Trees</p>
-                  <p className="text-3xl font-bold text-emerald-400">
-                    {projectTotals.planned_trees.toLocaleString()}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-white/70">Actual Trees</p>
-                  <p className="text-3xl font-bold text-amber-400">
-                    {projectTotals.actual_trees.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-              <div>
-                <div className="mb-4">
-                  <p className="text-sm text-white/70">Planned Hectares</p>
-                  <p className="text-3xl font-bold text-emerald-400">
-                    {projectTotals.planned_hectares.toLocaleString()} ha
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-white/70">Actual Hectares</p>
-                  <p className="text-3xl font-bold text-amber-400">
-                    {projectTotals.actual_hectares.toLocaleString()} ha
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
+      <div className="container mx-auto px-4 min-h-screen flex items-center justify-center">
+        <div className="w-full max-w-4xl mt-24">
           <div className="space-y-6">
             {phaseTotals.map((phase) => (
               <div
