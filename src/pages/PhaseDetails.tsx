@@ -1,43 +1,60 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Trees as Tree, ArrowLeft, BarChart } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { supabase } from '../services/supabaseClient';
+
+interface PhaseData {
+  trees: number;
+  hectares: number;
+  species: { name: string; trees: number }[];
+}
 
 function PhaseDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [phaseData, setPhaseData] = useState<PhaseData | null>(null);
 
-  const phaseData = {
-    1: {
-      trees: 5000,
-      hectares: 4.2,
-      species: [
-        { name: "Ceriops tagal", trees: 1500 },
-        { name: "Rhizophora mucronata", trees: 1500 },
-        { name: "Avicennia marina", trees: 1000 },
-        { name: "Bruguiera gymnorrhiza", trees: 1000 }
-      ]
-    },
-    2: {
-      trees: 6000,
-      hectares: 5.0,
-      species: [
-        { name: "Ceriops tagal", trees: 1500 },
-        { name: "Rhizophora mucronata", trees: 2000 },
-        { name: "Avicennia marina", trees: 1500 },
-        { name: "Bruguiera gymnorrhiza", trees: 1000 }
-      ]
-    },
-    3: {
-      trees: 4000,
-      hectares: 3.3,
-      species: [
-        { name: "Ceriops tagal", trees: 1000 },
-        { name: "Rhizophora mucronata", trees: 1000 },
-        { name: "Avicennia marina", trees: 1000 },
-        { name: "Bruguiera gymnorrhiza", trees: 1000 }
-      ]
+  useEffect(() => {
+    async function fetchPhaseData() {
+      // Fetch monthly data for the phase
+      const { data: monthlyData } = await supabase
+        .from('monthly_data')
+        .select('planned_trees, planned_hectares')
+        .eq('phase_id', `22222222-2222-2222-2222-22222222222${id}`);
+
+      if (monthlyData) {
+        const totalTrees = monthlyData.reduce((sum, item) => sum + (item.planned_trees || 0), 0);
+        const totalHectares = monthlyData.reduce((sum, item) => sum + (item.planned_hectares || 0), 0);
+
+        // Fetch species data for the phase
+        const { data: speciesData } = await supabase
+          .from(`phase${id}_species_data`)
+          .select('species_name, planned_trees')
+          .order('species_name');
+
+        const species = speciesData?.map(item => ({
+          name: item.species_name,
+          trees: item.planned_trees
+        })) || [];
+
+        setPhaseData({
+          trees: totalTrees,
+          hectares: totalHectares,
+          species
+        });
+      }
     }
-  }[id as string] || { trees: 0, hectares: 0, species: [] };
+
+    fetchPhaseData();
+  }, [id]);
+
+  if (!phaseData) {
+    return (
+      <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-400"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-900 text-white">
@@ -70,11 +87,11 @@ function PhaseDetails() {
         <div className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm border border-slate-700/50">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="bg-slate-700/30 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-2">Total Trees Planted</h3>
+              <h3 className="text-xl font-semibold mb-2">Total Trees Planned</h3>
               <p className="text-4xl font-bold text-emerald-400">{phaseData.trees.toLocaleString()}</p>
             </div>
             <div className="bg-slate-700/30 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-2">Total Area Planted</h3>
+              <h3 className="text-xl font-semibold mb-2">Total Area Planned</h3>
               <p className="text-4xl font-bold text-emerald-400">{phaseData.hectares.toLocaleString()} ha</p>
             </div>
           </div>
@@ -85,7 +102,7 @@ function PhaseDetails() {
               <thead>
                 <tr className="border-b border-slate-700">
                   <th className="text-left py-4 px-6">Species</th>
-                  <th className="text-right py-4 px-6">Trees Planted</th>
+                  <th className="text-right py-4 px-6">Trees Planned</th>
                 </tr>
               </thead>
               <tbody>
