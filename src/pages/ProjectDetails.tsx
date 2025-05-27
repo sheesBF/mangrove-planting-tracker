@@ -6,7 +6,16 @@ import { supabase } from '../services/supabaseClient';
 interface ProjectData {
   totalTrees: number;
   totalHectares: number;
-  phases: { id: string; phase_number: number; trees: number }[];
+  totalActualTrees: number;
+  totalActualHectares: number;
+  phases: {
+    id: string;
+    phase_number: number;
+    trees: number;
+    actual_trees: number;
+    hectares: number;
+    actual_hectares: number;
+  }[];
   species: { name: string; trees: number }[];
 }
 
@@ -22,6 +31,8 @@ function ProjectDetails() {
         .select(`
           planned_trees,
           planned_hectares,
+          actual_trees,
+          actual_hectares,
           phases!monthly_data_phase_id_fkey (
             id,
             phase_number
@@ -37,22 +48,30 @@ function ProjectDetails() {
       if (monthlyData) {
         const totalTrees = monthlyData.reduce((sum, item) => sum + (item.planned_trees || 0), 0);
         const totalHectares = monthlyData.reduce((sum, item) => sum + (item.planned_hectares || 0), 0);
+        const totalActualTrees = monthlyData.reduce((sum, item) => sum + (item.actual_trees || 0), 0);
+        const totalActualHectares = monthlyData.reduce((sum, item) => sum + (item.actual_hectares || 0), 0);
         
-        // Group by phase and sum trees - updated to use new phases reference
+        // Group by phase and sum trees - updated to include actual values
         const phases = monthlyData.reduce((acc, item) => {
           if (!item.phases) return acc;
           const phase = acc.find(p => p.id === item.phases.id);
           if (phase) {
             phase.trees += item.planned_trees || 0;
+            phase.actual_trees += item.actual_trees || 0;
+            phase.hectares += item.planned_hectares || 0;
+            phase.actual_hectares += item.actual_hectares || 0;
           } else {
             acc.push({
               id: item.phases.id,
               phase_number: item.phases.phase_number,
-              trees: item.planned_trees || 0
+              trees: item.planned_trees || 0,
+              actual_trees: item.actual_trees || 0,
+              hectares: item.planned_hectares || 0,
+              actual_hectares: item.actual_hectares || 0
             });
           }
           return acc;
-        }, [] as { id: string; phase_number: number; trees: number }[]);
+        }, [] as ProjectData['phases']);
 
         // Fetch species data
         const { data: speciesData } = await supabase
@@ -68,6 +87,8 @@ function ProjectDetails() {
         setProjectData({
           totalTrees,
           totalHectares,
+          totalActualTrees,
+          totalActualHectares,
           phases: phases.sort((a, b) => a.phase_number - b.phase_number),
           species
         });
@@ -116,12 +137,22 @@ function ProjectDetails() {
         <div className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm border border-slate-700/50">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="bg-slate-700/30 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-2">Total Trees Planned</h3>
-              <p className="text-4xl font-bold text-emerald-400">{projectData.totalTrees.toLocaleString()}</p>
+              <h3 className="text-xl font-semibold mb-4">Planned Progress</h3>
+              <div className="space-y-2">
+                <p className="text-sm text-white/70">Trees Planned</p>
+                <p className="text-4xl font-bold text-emerald-400">{projectData.totalTrees.toLocaleString()}</p>
+                <p className="text-sm text-white/70 mt-4">Hectares Planned</p>
+                <p className="text-4xl font-bold text-emerald-400">{projectData.totalHectares.toLocaleString()} ha</p>
+              </div>
             </div>
             <div className="bg-slate-700/30 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-2">Total Area Planned</h3>
-              <p className="text-4xl font-bold text-emerald-400">{projectData.totalHectares.toLocaleString()} ha</p>
+              <h3 className="text-xl font-semibold mb-4">Actual Progress</h3>
+              <div className="space-y-2">
+                <p className="text-sm text-white/70">Trees Planted</p>
+                <p className="text-4xl font-bold text-amber-400">{projectData.totalActualTrees.toLocaleString()}</p>
+                <p className="text-sm text-white/70 mt-4">Hectares Covered</p>
+                <p className="text-4xl font-bold text-amber-400">{projectData.totalActualHectares.toLocaleString()} ha</p>
+              </div>
             </div>
           </div>
 
@@ -153,6 +184,9 @@ function ProjectDetails() {
                   <tr className="border-b border-slate-700">
                     <th className="text-left py-4 px-6">Phase</th>
                     <th className="text-right py-4 px-6">Trees Planned</th>
+                    <th className="text-right py-4 px-6">Trees Planted</th>
+                    <th className="text-right py-4 px-6">Hectares Planned</th>
+                    <th className="text-right py-4 px-6">Hectares Covered</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -160,6 +194,9 @@ function ProjectDetails() {
                     <tr key={phase.id} className="border-b border-slate-700/50 hover:bg-slate-700/20">
                       <td className="py-4 px-6">Phase {phase.phase_number}</td>
                       <td className="text-right py-4 px-6">{phase.trees.toLocaleString()}</td>
+                      <td className="text-right py-4 px-6 text-amber-400">{phase.actual_trees.toLocaleString()}</td>
+                      <td className="text-right py-4 px-6">{phase.hectares.toLocaleString()} ha</td>
+                      <td className="text-right py-4 px-6 text-amber-400">{phase.actual_hectares.toLocaleString()} ha</td>
                     </tr>
                   ))}
                 </tbody>
