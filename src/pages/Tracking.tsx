@@ -1,9 +1,67 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Trees as Tree, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../services/supabaseClient';
+
+interface ProjectSummary {
+  totalTrees: number;
+  totalHectares: number;
+}
+
+interface PhaseSummary {
+  id: number;
+  totalTrees: number;
+  totalHectares: number;
+}
 
 function Tracking() {
   const navigate = useNavigate();
+  const [projectSummary, setProjectSummary] = useState<ProjectSummary | null>(null);
+  const [phaseSummaries, setPhaseSummaries] = useState<PhaseSummary[]>([]);
+
+  useEffect(() => {
+    async function fetchSummaries() {
+      // Fetch summaries for each phase
+      const phases = [1, 2, 3];
+      const phaseData = await Promise.all(
+        phases.map(async (phaseNum) => {
+          const { data } = await supabase
+            .from(`phase${phaseNum}_monthly_data`)
+            .select('planned_trees, planned_hectares');
+
+          const totalTrees = data?.reduce((sum, item) => sum + (item.planned_trees || 0), 0) || 0;
+          const totalHectares = data?.reduce((sum, item) => sum + (item.planned_hectares || 0), 0) || 0;
+
+          return {
+            id: phaseNum,
+            totalTrees,
+            totalHectares
+          };
+        })
+      );
+
+      setPhaseSummaries(phaseData);
+
+      // Calculate project totals
+      const projectTotalTrees = phaseData.reduce((sum, phase) => sum + phase.totalTrees, 0);
+      const projectTotalHectares = phaseData.reduce((sum, phase) => sum + phase.totalHectares, 0);
+
+      setProjectSummary({
+        totalTrees: projectTotalTrees,
+        totalHectares: projectTotalHectares
+      });
+    }
+
+    fetchSummaries();
+  }, []);
+
+  if (!projectSummary || phaseSummaries.length === 0) {
+    return (
+      <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-400"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-900 text-white">
@@ -25,15 +83,19 @@ function Tracking() {
 
       <div className="container mx-auto px-4 min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-12 w-full max-w-5xl">
-          {/* Project 1 Button */}
+          {/* Project Button */}
           <button 
             onClick={() => navigate('/project/1')}
-            className="relative group overflow-hidden rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 p-6 w-64 h-48 transition-all duration-300 hover:scale-105 hover:shadow-xl"
+            className="relative group overflow-hidden rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 p-6 w-full max-w-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
           >
             <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
             <div className="relative z-10">
-              <h3 className="text-2xl font-bold text-white">Project 1</h3>
-              <div className="absolute bottom-6 right-6">
+              <h3 className="text-2xl font-bold text-white mb-2">Project 1</h3>
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-white/80">Total Trees: {projectSummary.totalTrees.toLocaleString()}</p>
+                  <p className="text-white/80">Total Hectares: {projectSummary.totalHectares.toLocaleString()} ha</p>
+                </div>
                 <Tree className="h-8 w-8 text-white/30" />
               </div>
             </div>
@@ -43,45 +105,34 @@ function Tracking() {
           <div className="w-px h-12 bg-emerald-400/30"></div>
 
           {/* Phase Buttons */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <button 
-              onClick={() => navigate('/phase/1')}
-              className="relative group overflow-hidden rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 p-6 w-64 h-48 transition-all duration-300 hover:scale-105 hover:shadow-xl"
-            >
-              <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
-              <div className="relative z-10">
-                <h3 className="text-2xl font-bold text-white">Phase 1</h3>
-                <div className="absolute bottom-6 right-6">
-                  <Tree className="h-8 w-8 text-white/30" />
-                </div>
-              </div>
-            </button>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+            {phaseSummaries.map((phase) => {
+              const gradientColors = {
+                1: 'from-blue-500 to-blue-600',
+                2: 'from-emerald-500 to-emerald-600',
+                3: 'from-purple-500 to-purple-600'
+              }[phase.id];
 
-            <button 
-              onClick={() => navigate('/phase/2')}
-              className="relative group overflow-hidden rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 p-6 w-64 h-48 transition-all duration-300 hover:scale-105 hover:shadow-xl"
-            >
-              <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
-              <div className="relative z-10">
-                <h3 className="text-2xl font-bold text-white">Phase 2</h3>
-                <div className="absolute bottom-6 right-6">
-                  <Tree className="h-8 w-8 text-white/30" />
-                </div>
-              </div>
-            </button>
-
-            <button 
-              onClick={() => navigate('/phase/3')}
-              className="relative group overflow-hidden rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 p-6 w-64 h-48 transition-all duration-300 hover:scale-105 hover:shadow-xl"
-            >
-              <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
-              <div className="relative z-10">
-                <h3 className="text-2xl font-bold text-white">Phase 3</h3>
-                <div className="absolute bottom-6 right-6">
-                  <Tree className="h-8 w-8 text-white/30" />
-                </div>
-              </div>
-            </button>
+              return (
+                <button 
+                  key={phase.id}
+                  onClick={() => navigate(`/phase/${phase.id}`)}
+                  className={`relative group overflow-hidden rounded-xl bg-gradient-to-r ${gradientColors} p-6 transition-all duration-300 hover:scale-105 hover:shadow-xl`}
+                >
+                  <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                  <div className="relative z-10">
+                    <h3 className="text-2xl font-bold text-white mb-2">Phase {phase.id}</h3>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="text-white/80 text-sm">Trees: {phase.totalTrees.toLocaleString()}</p>
+                        <p className="text-white/80 text-sm">Hectares: {phase.totalHectares.toLocaleString()} ha</p>
+                      </div>
+                      <Tree className="h-8 w-8 text-white/30" />
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
