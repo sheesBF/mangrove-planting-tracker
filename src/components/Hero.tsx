@@ -56,7 +56,7 @@ const Hero: React.FC = () => {
         }}
       >
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white text-center mb-8">
-          MozBlue Project 1 Planting Tracker
+          Project 1 Planting
         </h1>
         <button 
           onClick={() => navigate('/tracking')}
