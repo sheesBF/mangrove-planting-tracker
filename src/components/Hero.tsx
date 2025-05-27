@@ -34,6 +34,18 @@ const Hero: React.FC = () => {
           transition: 'opacity 2s ease-in-out'
         }}
       />
+
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: 'url("/mangrove.jpg")',
+          backgroundPosition: 'center',
+          backgroundSize: 'cover',
+          transform: `translateY(${scrollY * 0.2}px)`,
+          opacity: isLoaded ? 1 : 0,
+          transition: 'opacity 1s ease-in-out'
+        }}
+      />
       
       <div 
         className="absolute inset-0 flex flex-col items-center justify-center z-20 px-6"
