@@ -36,58 +36,97 @@ function Tracking() {
 
   useEffect(() => {
     async function fetchSummaries() {
-      // Fetch summaries for each phase
-      const phases = [1, 2];  // Only phases 1 and 2 exist in the database
-      const phaseData = await Promise.all(
-        phases.map(async (phaseNum) => {
-          const { data } = await supabase
-            .from(`phase${phaseNum}_monthly_data`)
-            .select('planned_trees, planned_hectares, actual_trees, actual_hectares');
+      try {
+        // Fetch summaries for each phase
+        const phases = [1, 2];  // Only phases 1 and 2 exist in the database
+        const phaseData = await Promise.all(
+          phases.map(async (phaseNum) => {
+            const { data, error } = await supabase
+              .from(`phase${phaseNum}_monthly_data`)
+              .select('*');
 
-          const totalTrees = data?.reduce((sum, item) => sum + (item.planned_trees || 0), 0) || 0;
-          const totalHectares = data?.reduce((sum, item) => sum + (item.planned_hectares || 0), 0) || 0;
-          const totalActualTrees = data?.reduce((sum, item) => sum + (item.actual_trees || 0), 0) || 0;
-          const totalActualHectares = data?.reduce((sum, item) => sum + (item.actual_hectares || 0), 0) || 0;
+            if (error) {
+              console.error(`Error fetching phase ${phaseNum} data:`, error);
+              return {
+                id: phaseNum,
+                totalTrees: 0,
+                totalHectares: 0,
+                totalActualTrees: 0,
+                totalActualHectares: 0
+              };
+            }
 
-          return {
-            id: phaseNum,
-            totalTrees,
-            totalHectares,
-            totalActualTrees,
-            totalActualHectares
-          };
-        })
-      );
+            if (!data) return {
+              id: phaseNum,
+              totalTrees: 0,
+              totalHectares: 0,
+              totalActualTrees: 0,
+              totalActualHectares: 0
+            };
 
-      setPhaseSummaries(phaseData);
+            const totalTrees = data.reduce((sum, item) => sum + (Number(item.planned_trees) || 0), 0);
+            const totalHectares = data.reduce((sum, item) => sum + (Number(item.planned_hectares) || 0), 0);
+            const totalActualTrees = data.reduce((sum, item) => sum + (Number(item.actual_trees) || 0), 0);
+            const totalActualHectares = data.reduce((sum, item) => sum + (Number(item.actual_hectares) || 0), 0);
 
-      // Calculate project totals
-      const projectTotalTrees = phaseData.reduce((sum, phase) => sum + phase.totalTrees, 0);
-      const projectTotalHectares = phaseData.reduce((sum, phase) => sum + phase.totalHectares, 0);
-      const projectTotalActualTrees = phaseData.reduce((sum, phase) => sum + phase.totalActualTrees, 0);
-      const projectTotalActualHectares = phaseData.reduce((sum, phase) => sum + phase.totalActualHectares, 0);
+            console.log(`Phase ${phaseNum} totals:`, {
+              totalTrees,
+              totalHectares,
+              totalActualTrees,
+              totalActualHectares
+            });
 
-      setProjectSummary({
-        totalTrees: projectTotalTrees,
-        totalHectares: projectTotalHectares,
-        totalActualTrees: projectTotalActualTrees,
-        totalActualHectares: projectTotalActualHectares
-      });
+            return {
+              id: phaseNum,
+              totalTrees,
+              totalHectares,
+              totalActualTrees,
+              totalActualHectares
+            };
+          })
+        );
+
+        setPhaseSummaries(phaseData);
+
+        // Calculate project totals
+        const projectTotalTrees = phaseData.reduce((sum, phase) => sum + phase.totalTrees, 0);
+        const projectTotalHectares = phaseData.reduce((sum, phase) => sum + phase.totalHectares, 0);
+        const projectTotalActualTrees = phaseData.reduce((sum, phase) => sum + phase.totalActualTrees, 0);
+        const projectTotalActualHectares = phaseData.reduce((sum, phase) => sum + phase.totalActualHectares, 0);
+
+        setProjectSummary({
+          totalTrees: projectTotalTrees,
+          totalHectares: projectTotalHectares,
+          totalActualTrees: projectTotalActualTrees,
+          totalActualHectares: projectTotalActualHectares
+        });
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     }
 
     fetchSummaries();
   }, []);
 
   const handlePhaseClick = async (phaseId: number) => {
-    setSelectedPhase(phaseId);
-    setShowMonths(true);
-    
-    const { data } = await supabase
-      .from(`phase${phaseId}_monthly_data`)
-      .select('month, planned_trees, planned_hectares, actual_trees, actual_hectares')
-      .order('month');
-    
-    setMonthlyData(data || []);
+    try {
+      setSelectedPhase(phaseId);
+      setShowMonths(true);
+      
+      const { data, error } = await supabase
+        .from(`phase${phaseId}_monthly_data`)
+        .select('*')
+        .order('month');
+      
+      if (error) {
+        console.error('Error fetching monthly data:', error);
+        return;
+      }
+
+      setMonthlyData(data || []);
+    } catch (error) {
+      console.error('Error handling phase click:', error);
+    }
   };
 
   const handleMonthClick = (month: string) => {
@@ -215,7 +254,7 @@ function Tracking() {
                     <p className="font-medium">{formatDate(data.month)}</p>
                     <div className="text-sm">
                       <p className="text-emerald-400">Planned: {data.planned_trees.toLocaleString()} trees</p>
-                      <p className="text-amber-400">Actual: {data.actual_trees.toLocaleString()} trees</p>
+                      <p className="text-amber-400">Actual: {(data.actual_trees || 0).toLocaleString()} trees</p>
                     </div>
                   </div>
                 </button>
