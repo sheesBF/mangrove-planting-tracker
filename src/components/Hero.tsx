@@ -18,7 +18,7 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <section className="relative h-[70vh] w-full overflow-hidden">
+    <section className="relative h-[60vh] w-full overflow-hidden">
       <div 
         className="absolute inset-0 bg-black/40 z-10"
         style={{
@@ -28,13 +28,13 @@ const Hero: React.FC = () => {
       />
       
       <div 
-        className="absolute inset-0 bg-gradient-to-b from-transparent to-black/70 z-10"
+        className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-slate-900 z-10"
         style={{
           opacity: isLoaded ? 1 : 0,
           transition: 'opacity 2s ease-in-out'
         }}
       />
-
+      
       <div
         className="absolute inset-0 z-0"
         style={{

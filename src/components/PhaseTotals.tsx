@@ -33,7 +33,7 @@ const PhaseTotals: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm">
+    <div className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm shadow-xl border border-slate-700/50">
       <h2 className="text-2xl font-bold mb-6">Phase Overview</h2>
       <div className="mb-6 border-b border-slate-700">
         <div className="flex space-x-2">

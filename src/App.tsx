@@ -14,12 +14,10 @@ function App() {
     <Router>
       <div className="min-h-screen bg-slate-900 text-white">
         <Header />
-        <main>
-          <Hero />
-          <div className="container mx-auto px-4 py-16">
-            <PhaseTotals />
-          </div>
-        </main>
+        <Hero />
+        <div className="container mx-auto px-4 -mt-20 relative z-10">
+          <PhaseTotals />
+        </div>
       </div>
     </Router>
   );
