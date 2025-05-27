@@ -68,7 +68,7 @@ function Tracking() {
             <div
               key={phase.phase_name}
               className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm border border-slate-700/50 hover:bg-slate-700/50 transition-all duration-300 cursor-pointer"
-              onClick={() => navigate(`/phase/${phase.phase_name.toLowerCase()}`)}
+              onClick={() => navigate(`/phase/${phase.phase_name.split(' ')[1]}`)}
             >
               <h3 className="text-xl font-semibold mb-4">{phase.phase_name}</h3>
               <div className="grid grid-cols-2 gap-6">
