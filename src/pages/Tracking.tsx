@@ -5,6 +5,8 @@ import { supabase } from '../services/supabaseClient';
 
 interface PhaseTotal {
   phase_name: string;
+  total_planned_trees: number;
+  total_planned_hectares: number;
   total_actual_trees: number;
   total_actual_hectares: number;
 }
@@ -14,13 +16,19 @@ function Tracking() {
   const [phaseTotals, setPhaseTotals] = useState<PhaseTotal[]>([]);
   const [activeTab, setActiveTab] = useState<string>('Phase 1');
   const [isLoading, setIsLoading] = useState(true);
+  const [projectTotals, setProjectTotals] = useState({
+    planned_trees: 0,
+    planned_hectares: 0,
+    actual_trees: 0,
+    actual_hectares: 0,
+  });
 
   useEffect(() => {
     async function fetchPhaseTotals() {
       try {
         const { data, error } = await supabase
           .from('phase_totals')
-          .select('phase_name, total_actual_trees, total_actual_hectares')
+          .select('*')
           .order('phase_name');
 
         if (error) {
@@ -28,8 +36,23 @@ function Tracking() {
           return;
         }
 
-        if (data && data.length > 0) {
+        if (data) {
           setPhaseTotals(data);
+          
+          // Calculate project totals
+          const totals = data.reduce((acc, phase) => ({
+            planned_trees: acc.planned_trees + phase.total_planned_trees,
+            planned_hectares: acc.planned_hectares + phase.total_planned_hectares,
+            actual_trees: acc.actual_trees + phase.total_actual_trees,
+            actual_hectares: acc.actual_hectares + phase.total_actual_hectares,
+          }), {
+            planned_trees: 0,
+            planned_hectares: 0,
+            actual_trees: 0,
+            actual_hectares: 0,
+          });
+          
+          setProjectTotals(totals);
         }
       } catch (error) {
         console.error('Error:', error);
@@ -69,21 +92,55 @@ function Tracking() {
 
       <div className="container mx-auto px-4 min-h-screen flex items-center justify-center">
         <div className="w-full max-w-4xl mt-24">
+          <div className="bg-slate-800/50 rounded-xl backdrop-blur-sm mb-8">
+            <h2 className="text-2xl font-bold p-6 border-b border-slate-700">Project Overview</h2>
+            <div className="p-6 grid grid-cols-2 gap-6">
+              <div>
+                <div className="mb-4">
+                  <p className="text-sm text-white/70">Planned Trees</p>
+                  <p className="text-3xl font-bold text-emerald-400">
+                    {projectTotals.planned_trees.toLocaleString()}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-white/70">Actual Trees</p>
+                  <p className="text-3xl font-bold text-amber-400">
+                    {projectTotals.actual_trees.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+              <div>
+                <div className="mb-4">
+                  <p className="text-sm text-white/70">Planned Hectares</p>
+                  <p className="text-3xl font-bold text-emerald-400">
+                    {projectTotals.planned_hectares.toLocaleString()} ha
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-white/70">Actual Hectares</p>
+                  <p className="text-3xl font-bold text-amber-400">
+                    {projectTotals.actual_hectares.toLocaleString()} ha
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="bg-slate-800/50 rounded-xl backdrop-blur-sm">
             <div className="border-b border-slate-700">
               <div className="flex">
-                {['Phase 1', 'Phase 2', 'Phase 3'].map((phase) => (
+                {phaseTotals.map((phase) => (
                   <button
-                    key={phase}
-                    onClick={() => setActiveTab(phase)}
+                    key={phase.phase_name}
+                    onClick={() => setActiveTab(phase.phase_name)}
                     className={`px-8 py-4 text-sm font-medium transition-colors relative ${
-                      activeTab === phase
+                      activeTab === phase.phase_name
                         ? 'text-emerald-400'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    {phase}
-                    {activeTab === phase && (
+                    {phase.phase_name}
+                    {activeTab === phase.phase_name && (
                       <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400"></div>
                     )}
                   </button>
@@ -92,34 +149,49 @@ function Tracking() {
             </div>
 
             <div className="p-8">
-              {['Phase 1', 'Phase 2', 'Phase 3'].map((phaseLabel) => {
-                const phase = phaseTotals.find((p) => p.phase_name === phaseLabel);
-                return (
-                  <div
-                    key={phaseLabel}
-                    className={`space-y-8 ${activeTab === phaseLabel ? 'block' : 'hidden'}`}
-                  >
-                    {phase ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="bg-slate-700/30 rounded-lg p-6 backdrop-blur-sm">
-                          <h3 className="text-lg font-medium text-slate-300 mb-2">Total Trees Planted</h3>
-                          <p className="text-4xl font-bold text-emerald-400">
+              {phaseTotals.map((phase) => (
+                <div
+                  key={phase.phase_name}
+                  className={`space-y-8 ${activeTab === phase.phase_name ? 'block' : 'hidden'}`}
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="bg-slate-700/30 rounded-lg p-6 backdrop-blur-sm">
+                      <h3 className="text-lg font-medium text-slate-300 mb-2">Trees</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-sm text-white/70">Planned</p>
+                          <p className="text-3xl font-bold text-emerald-400">
+                            {phase.total_planned_trees.toLocaleString()}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-white/70">Planted</p>
+                          <p className="text-3xl font-bold text-amber-400">
                             {phase.total_actual_trees.toLocaleString()}
                           </p>
                         </div>
-                        <div className="bg-slate-700/30 rounded-lg p-6 backdrop-blur-sm">
-                          <h3 className="text-lg font-medium text-slate-300 mb-2">Total Hectares Covered</h3>
-                          <p className="text-4xl font-bold text-emerald-400">
+                      </div>
+                    </div>
+                    <div className="bg-slate-700/30 rounded-lg p-6 backdrop-blur-sm">
+                      <h3 className="text-lg font-medium text-slate-300 mb-2">Hectares</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-sm text-white/70">Planned</p>
+                          <p className="text-3xl font-bold text-emerald-400">
+                            {phase.total_planned_hectares.toLocaleString()} ha
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-white/70">Covered</p>
+                          <p className="text-3xl font-bold text-amber-400">
                             {phase.total_actual_hectares.toLocaleString()} ha
                           </p>
                         </div>
                       </div>
-                    ) : (
-                      <p className="text-slate-400">No data available for {phaseLabel}.</p>
-                    )}
+                    </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </div>
         </div>
