@@ -6,18 +6,24 @@ import { supabase } from '../services/supabaseClient';
 interface ProjectSummary {
   totalTrees: number;
   totalHectares: number;
+  totalActualTrees: number;
+  totalActualHectares: number;
 }
 
 interface PhaseSummary {
   id: number;
   totalTrees: number;
   totalHectares: number;
+  totalActualTrees: number;
+  totalActualHectares: number;
 }
 
 interface MonthlyData {
   month: string;
   planned_trees: number;
   planned_hectares: number;
+  actual_trees: number;
+  actual_hectares: number;
 }
 
 function Tracking() {
@@ -31,20 +37,24 @@ function Tracking() {
   useEffect(() => {
     async function fetchSummaries() {
       // Fetch summaries for each phase
-      const phases = [1, 2, 3];
+      const phases = [1, 2];  // Only phases 1 and 2 exist in the database
       const phaseData = await Promise.all(
         phases.map(async (phaseNum) => {
           const { data } = await supabase
             .from(`phase${phaseNum}_monthly_data`)
-            .select('planned_trees, planned_hectares');
+            .select('planned_trees, planned_hectares, actual_trees, actual_hectares');
 
           const totalTrees = data?.reduce((sum, item) => sum + (item.planned_trees || 0), 0) || 0;
           const totalHectares = data?.reduce((sum, item) => sum + (item.planned_hectares || 0), 0) || 0;
+          const totalActualTrees = data?.reduce((sum, item) => sum + (item.actual_trees || 0), 0) || 0;
+          const totalActualHectares = data?.reduce((sum, item) => sum + (item.actual_hectares || 0), 0) || 0;
 
           return {
             id: phaseNum,
             totalTrees,
-            totalHectares
+            totalHectares,
+            totalActualTrees,
+            totalActualHectares
           };
         })
       );
@@ -54,10 +64,14 @@ function Tracking() {
       // Calculate project totals
       const projectTotalTrees = phaseData.reduce((sum, phase) => sum + phase.totalTrees, 0);
       const projectTotalHectares = phaseData.reduce((sum, phase) => sum + phase.totalHectares, 0);
+      const projectTotalActualTrees = phaseData.reduce((sum, phase) => sum + phase.totalActualTrees, 0);
+      const projectTotalActualHectares = phaseData.reduce((sum, phase) => sum + phase.totalActualHectares, 0);
 
       setProjectSummary({
         totalTrees: projectTotalTrees,
-        totalHectares: projectTotalHectares
+        totalHectares: projectTotalHectares,
+        totalActualTrees: projectTotalActualTrees,
+        totalActualHectares: projectTotalActualHectares
       });
     }
 
@@ -70,7 +84,7 @@ function Tracking() {
     
     const { data } = await supabase
       .from(`phase${phaseId}_monthly_data`)
-      .select('month, planned_trees, planned_hectares')
+      .select('month, planned_trees, planned_hectares, actual_trees, actual_hectares')
       .order('month');
     
     setMonthlyData(data || []);
@@ -131,12 +145,24 @@ function Tracking() {
               <h2 className="text-2xl font-bold mb-6">Project Overview</h2>
               <div className="grid grid-cols-2 gap-6 mb-8">
                 <div>
-                  <p className="text-sm text-white/70">Total Trees</p>
-                  <p className="text-3xl font-bold text-emerald-400">{projectSummary.totalTrees.toLocaleString()}</p>
+                  <div className="mb-4">
+                    <p className="text-sm text-white/70">Planned Trees</p>
+                    <p className="text-3xl font-bold text-emerald-400">{projectSummary.totalTrees.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-white/70">Actual Trees</p>
+                    <p className="text-3xl font-bold text-amber-400">{projectSummary.totalActualTrees.toLocaleString()}</p>
+                  </div>
                 </div>
                 <div>
-                  <p className="text-sm text-white/70">Total Hectares</p>
-                  <p className="text-3xl font-bold text-emerald-400">{projectSummary.totalHectares.toLocaleString()} ha</p>
+                  <div className="mb-4">
+                    <p className="text-sm text-white/70">Planned Hectares</p>
+                    <p className="text-3xl font-bold text-emerald-400">{projectSummary.totalHectares.toLocaleString()} ha</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-white/70">Actual Hectares</p>
+                    <p className="text-3xl font-bold text-amber-400">{projectSummary.totalActualHectares.toLocaleString()} ha</p>
+                  </div>
                 </div>
               </div>
               <div className="space-y-4">
@@ -146,15 +172,27 @@ function Tracking() {
                     onClick={() => handlePhaseClick(phase.id)}
                     className="bg-slate-700/30 rounded-lg p-6 hover:bg-slate-700/50 transition-colors cursor-pointer"
                   >
-                    <h3 className="text-xl font-semibold mb-2">Phase {phase.id}</h3>
+                    <h3 className="text-xl font-semibold mb-4">Phase {phase.id}</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-white/70">Trees</p>
-                        <p className="text-lg font-medium">{phase.totalTrees.toLocaleString()}</p>
+                        <div className="mb-3">
+                          <p className="text-sm text-white/70">Planned Trees</p>
+                          <p className="text-lg font-medium text-emerald-400">{phase.totalTrees.toLocaleString()}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-white/70">Actual Trees</p>
+                          <p className="text-lg font-medium text-amber-400">{phase.totalActualTrees.toLocaleString()}</p>
+                        </div>
                       </div>
                       <div>
-                        <p className="text-sm text-white/70">Hectares</p>
-                        <p className="text-lg font-medium">{phase.totalHectares.toLocaleString()} ha</p>
+                        <div className="mb-3">
+                          <p className="text-sm text-white/70">Planned Hectares</p>
+                          <p className="text-lg font-medium text-emerald-400">{phase.totalHectares.toLocaleString()} ha</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-white/70">Actual Hectares</p>
+                          <p className="text-lg font-medium text-amber-400">{phase.totalActualHectares.toLocaleString()} ha</p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -175,9 +213,10 @@ function Tracking() {
                   <Calendar className="h-5 w-5 text-emerald-400" />
                   <div className="text-left">
                     <p className="font-medium">{formatDate(data.month)}</p>
-                    <p className="text-sm text-white/70">
-                      {data.planned_trees.toLocaleString()} trees
-                    </p>
+                    <div className="text-sm">
+                      <p className="text-emerald-400">Planned: {data.planned_trees.toLocaleString()} trees</p>
+                      <p className="text-amber-400">Actual: {data.actual_trees.toLocaleString()} trees</p>
+                    </div>
                   </div>
                 </button>
               ))}
