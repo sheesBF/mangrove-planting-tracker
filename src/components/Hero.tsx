@@ -40,7 +40,7 @@ const Hero: React.FC = () => {
         style={{
           backgroundImage: 'url("https://images.pexels.com/photos/13790858/pexels-photo-13790858.jpeg")',
           backgroundPosition: 'center',
-          backgroundPositionY: '-100px',
+          backgroundPositionY: '-400px',
           backgroundSize: 'cover',
           transform: `translateY(${scrollY * 0.2}px)`,
           opacity: isLoaded ? 1 : 0,
