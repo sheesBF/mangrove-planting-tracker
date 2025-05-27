@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Trees as Tree, ArrowLeft, Calendar } from 'lucide-react';
+import { Trees as Tree, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 
@@ -14,8 +14,6 @@ interface PhaseTotal {
 function Tracking() {
   const navigate = useNavigate();
   const [phaseTotals, setPhaseTotals] = useState<PhaseTotal[]>([]);
-  const [selectedPhase, setSelectedPhase] = useState<string | null>(null);
-  const [showMonths, setShowMonths] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -117,10 +115,7 @@ function Tracking() {
               <div
                 key={phase.phase_name}
                 className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm border border-slate-700/50 hover:bg-slate-700/50 transition-all duration-300 cursor-pointer"
-                onClick={() => {
-                  setSelectedPhase(phase.phase_name);
-                  setShowMonths(true);
-                }}
+                onClick={() => navigate(`/phase/${phase.phase_name.toLowerCase()}`)}
               >
                 <h3 className="text-xl font-semibold mb-4">{phase.phase_name}</h3>
                 <div className="grid grid-cols-2 gap-6">
