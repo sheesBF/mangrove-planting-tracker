@@ -11,7 +11,7 @@ function App() {
         <Route path="/" element={
           <div className="min-h-screen bg-slate-900 text-white">
             <Header />
-            {/* <Hero /> */}
+            <Hero />
           </div>
         } />
         <Route path="/tracking" element={<Tracking />} />
