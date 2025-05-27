@@ -12,17 +12,15 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-slate-900 text-white">
-      {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-10 bg-gradient-to-b from-slate-900/90 to-transparent">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <Tree className="h-6 w-6 text-emerald-400" />
-            <h1 className="text-xl font-semibold tracking-tight">MozBlue Monitoring</h1>
+            <h1 className="text-xl font-semibold tracking-tight">Mangrove Planting Tracker</h1>
           </div>
         </div>
       </header>
 
-      {/* Hero Section */}
       <div className="relative h-screen overflow-hidden">
         <div 
           className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
@@ -36,7 +34,7 @@ function Home() {
         
         <div className="absolute inset-0 flex items-center justify-center">
           <div className={`text-center max-w-3xl px-6 transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <h2 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">MozBlue Planting Tracker</h2>
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">Mangrove Planting Tracker</h2>
             <button 
               onClick={() => navigate('/tracking')}
               className="bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-3 px-8 rounded-full transition-colors shadow-lg"

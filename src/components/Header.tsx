@@ -7,7 +7,7 @@ const Header: React.FC = () => {
       <div className="container mx-auto flex items-center">
         <div className="flex items-center space-x-2">
           <Leaf className="h-6 w-6 text-white" />
-          <span className="text-xl font-semibold text-white">MozBlue Planting Tracker</span>
+          <span className="text-xl font-semibold text-white">Mangrove Planting Tracker</span>
         </div>
       </div>
     </header>

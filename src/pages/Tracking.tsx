@@ -55,7 +55,7 @@ function Tracking() {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <Tree className="h-6 w-6 text-emerald-400" />
-            <h1 className="text-xl font-semibold tracking-tight">MozBlue Monitoring</h1>
+            <h1 className="text-xl font-semibold tracking-tight">Mangrove Planting Tracker</h1>
           </div>
           <button
             onClick={() => navigate('/')}
