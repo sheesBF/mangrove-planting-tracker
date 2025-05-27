@@ -72,18 +72,18 @@ function Tracking() {
           <div className="bg-slate-800/50 rounded-xl backdrop-blur-sm">
             <div className="border-b border-slate-700">
               <div className="flex">
-                {['Phase 1', 'Phase 2', 'Phase 3'].map((phase) => (
+                {phaseTotals.map((phase) => (
                   <button
-                    key={phase}
-                    onClick={() => setActiveTab(phase)}
+                    key={phase.phase_name}
+                    onClick={() => setActiveTab(phase.phase_name)}
                     className={`px-8 py-4 text-sm font-medium transition-colors relative ${
-                      activeTab === phase
+                      activeTab === phase.phase_name
                         ? 'text-emerald-400'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    {phase}
-                    {activeTab === phase && (
+                    {phase.phase_name}
+                    {activeTab === phase.phase_name && (
                       <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400"></div>
                     )}
                   </button>
@@ -92,34 +92,27 @@ function Tracking() {
             </div>
 
             <div className="p-8">
-              {['Phase 1', 'Phase 2', 'Phase 3'].map((phaseLabel) => {
-                const phase = phaseTotals.find((p) => p.phase_name === phaseLabel);
-                return (
-                  <div
-                    key={phaseLabel}
-                    className={`space-y-8 ${activeTab === phaseLabel ? 'block' : 'hidden'}`}
-                  >
-                    {phase ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="bg-slate-700/30 rounded-lg p-6 backdrop-blur-sm">
-                          <h3 className="text-lg font-medium text-slate-300 mb-2">Total Trees Planted</h3>
-                          <p className="text-4xl font-bold text-emerald-400">
-                            {phase.total_actual_trees.toLocaleString()}
-                          </p>
-                        </div>
-                        <div className="bg-slate-700/30 rounded-lg p-6 backdrop-blur-sm">
-                          <h3 className="text-lg font-medium text-slate-300 mb-2">Total Hectares Covered</h3>
-                          <p className="text-4xl font-bold text-emerald-400">
-                            {phase.total_actual_hectares.toLocaleString()} ha
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="text-slate-400">No data available for {phaseLabel}.</p>
-                    )}
+              {phaseTotals.map((phase) => (
+                <div
+                  key={phase.phase_name}
+                  className={`space-y-8 ${activeTab === phase.phase_name ? 'block' : 'hidden'}`}
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="bg-slate-700/30 rounded-lg p-6 backdrop-blur-sm">
+                      <h3 className="text-lg font-medium text-slate-300 mb-2">Total Trees Planted</h3>
+                      <p className="text-4xl font-bold text-emerald-400">
+                        {phase.total_actual_trees.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="bg-slate-700/30 rounded-lg p-6 backdrop-blur-sm">
+                      <h3 className="text-lg font-medium text-slate-300 mb-2">Total Hectares Covered</h3>
+                      <p className="text-4xl font-bold text-emerald-400">
+                        {phase.total_actual_hectares.toLocaleString()} ha
+                      </p>
+                    </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </div>
         </div>
