@@ -1,92 +1,78 @@
 /*
-  # Populate species data tables
+  # Create species data tables
   
-  1. Data Population
-    - Insert planned trees data for each species in each phase
-    - Data spans from November 2024 to December 2026
-    
-  2. Species Distribution
-    Phase 1:
-    - Ceriops tagal: 125 trees/month
-    - Rhizophora mucronata: 125 trees/month
-    - Avicennia marina: 75 trees/month
-    - Bruguiera gymnorrhiza: 75 trees/month
-    
-    Phase 2:
-    - Ceriops tagal: 125 trees/month
-    - Rhizophora mucronata: 175 trees/month
-    - Avicennia marina: 125 trees/month
-    - Bruguiera gymnorrhiza: 75 trees/month
-    
-    Phase 3:
-    - Ceriops tagal: 100 trees/month
-    - Rhizophora mucronata: 100 trees/month
-    - Avicennia marina: 75 trees/month
-    - Bruguiera gymnorrhiza: 75 trees/month
+  1. New Tables
+    For each phase (1-3), create a species_data table with:
+      - `id` (uuid, primary key)
+      - `month` (date)
+      - `species_name` (text)
+      - `planned_trees` (integer)
+      - `actual_trees` (integer)
+      - `created_at` (timestamp)
+  
+  2. Constraints
+    - Unique constraint on month + species_name
+  
+  3. Security
+    - Enable RLS on all tables
+    - Add read policies for authenticated users
 */
 
-DO $$
-DECLARE
-  v_date date;
-  v_species text;
-BEGIN
-  -- Generate dates from Nov 2024 to Dec 2026
-  FOR v_date IN 
-    SELECT generate_series(
-      '2024-11-01'::date,
-      '2026-12-01'::date,
-      '1 month'::interval
-    )::date
-  LOOP
-    -- Insert data for each species in Phase 1
-    FOR v_species IN 
-      SELECT unnest(ARRAY[
-        'Ceriops tagal',
-        'Rhizophora mucronata',
-        'Avicennia marina',
-        'Bruguiera gymnorrhiza'
-      ])
-    LOOP
-      INSERT INTO phase1_species_data (month, species_name, planned_trees)
-      VALUES (
-        v_date,
-        v_species,
-        CASE v_species
-          WHEN 'Ceriops tagal' THEN 125
-          WHEN 'Rhizophora mucronata' THEN 125
-          WHEN 'Avicennia marina' THEN 75
-          WHEN 'Bruguiera gymnorrhiza' THEN 75
-        END
-      ) ON CONFLICT (month, species_name) DO UPDATE 
-      SET planned_trees = EXCLUDED.planned_trees;
-      
-      -- Insert data for Phase 2
-      INSERT INTO phase2_species_data (month, species_name, planned_trees)
-      VALUES (
-        v_date,
-        v_species,
-        CASE v_species
-          WHEN 'Ceriops tagal' THEN 125
-          WHEN 'Rhizophora mucronata' THEN 175
-          WHEN 'Avicennia marina' THEN 125
-          WHEN 'Bruguiera gymnorrhiza' THEN 75
-        END
-      ) ON CONFLICT (month, species_name) DO UPDATE 
-      SET planned_trees = EXCLUDED.planned_trees;
-      
-      -- Insert data for Phase 3
-      INSERT INTO phase3_species_data (month, species_name, planned_trees)
-      VALUES (
-        v_date,
-        v_species,
-        CASE v_species
-          WHEN 'Ceriops tagal' THEN 100
-          WHEN 'Rhizophora mucronata' THEN 100
-          WHEN 'Avicennia marina' THEN 75
-          WHEN 'Bruguiera gymnorrhiza' THEN 75
-        END
-      ) ON CONFLICT (month, species_name) DO UPDATE 
-      SET planned_trees = EXCLUDED.planned_trees;
-    END LOOP;
-  END LOOP;
-END $$;
+-- Phase 1 Species Data
+CREATE TABLE IF NOT EXISTS phase1_species_data (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  month date NOT NULL,
+  species_name text NOT NULL,
+  planned_trees integer NOT NULL DEFAULT 0,
+  actual_trees integer DEFAULT 0,
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE phase1_species_data ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow read access for authenticated users"
+  ON phase1_species_data
+  FOR SELECT
+  TO authenticated
+  USING (true);
+
+-- Phase 2 Species Data
+CREATE TABLE IF NOT EXISTS phase2_species_data (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  month date NOT NULL,
+  species_name text NOT NULL,
+  planned_trees integer NOT NULL DEFAULT 0,
+  actual_trees integer DEFAULT 0,
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE phase2_species_data ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow read access for authenticated users"
+  ON phase2_species_data
+  FOR SELECT
+  TO authenticated
+  USING (true);
+
+-- Phase 3 Species Data
+CREATE TABLE IF NOT EXISTS phase3_species_data (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  month date NOT NULL,
+  species_name text NOT NULL,
+  planned_trees integer NOT NULL DEFAULT 0,
+  actual_trees integer DEFAULT 0,
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE phase3_species_data ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow read access for authenticated users"
+  ON phase3_species_data
+  FOR SELECT
+  TO authenticated
+  USING (true);
+
+-- Add composite unique constraints
+ALTER TABLE phase1_species_data ADD CONSTRAINT phase1_species_data_month_species_key UNIQUE (month, species_name);
+ALTER TABLE phase2_species_data ADD CONSTRAINT phase2_species_data_month_species_key UNIQUE (month, species_name);
+ALTER TABLE phase3_species_data ADD CONSTRAINT phase3_species_data_month_species_key UNIQUE (month, species_name);

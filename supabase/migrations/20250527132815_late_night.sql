@@ -1,18 +1,20 @@
 /*
-  # Create base tables for project tracking
+  # Create base tables
   
   1. New Tables
-    - `projects` - Stores project information
+    - `projects` table for storing project information
       - `id` (uuid, primary key)
-      - `name` (text, not null)
-    - `phases` - Stores phase information
+      - `name` (text)
+      - `created_at` (timestamp)
+    - `phases` table for storing phase information
       - `id` (uuid, primary key)
       - `project_id` (uuid, foreign key to projects)
-      - `phase_number` (integer, not null)
+      - `phase_number` (integer)
+      - `created_at` (timestamp)
   
   2. Security
-    - Enable RLS on all tables
-    - Add policies for authenticated users
+    - Enable RLS on both tables
+    - Add read policies for authenticated users
 */
 
 -- Create projects table
@@ -46,15 +48,3 @@ CREATE POLICY "Allow read access for authenticated users"
   FOR SELECT
   TO authenticated
   USING (true);
-
--- Insert initial data
-INSERT INTO projects (id, name)
-VALUES ('11111111-1111-1111-1111-111111111111', 'MozBlue Project 1')
-ON CONFLICT (id) DO NOTHING;
-
-INSERT INTO phases (id, project_id, phase_number)
-VALUES 
-  ('22222222-2222-2222-2222-222222222221', '11111111-1111-1111-1111-111111111111', 1),
-  ('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 2),
-  ('22222222-2222-2222-2222-222222222223', '11111111-1111-1111-1111-111111111111', 3)
-ON CONFLICT (id) DO NOTHING;

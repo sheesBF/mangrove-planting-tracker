@@ -1,58 +1,77 @@
 /*
-  # Populate monthly data tables
+  # Create monthly data tables
   
-  1. Data Population
-    - Insert planned trees and hectares data for each phase
-    - Data spans from November 2024 to December 2026
-    
-  2. Monthly Targets
-    Phase 1:
-    - 400 trees/month
-    - 0.35 hectares/month
-    
-    Phase 2:
-    - 500 trees/month
-    - 0.42 hectares/month
-    
-    Phase 3:
-    - 350 trees/month
-    - 0.28 hectares/month
+  1. New Tables
+    For each phase (1-3), create a monthly_data table with:
+      - `id` (uuid, primary key)
+      - `month` (date)
+      - `planned_trees` (integer)
+      - `planned_hectares` (numeric)
+      - `actual_trees` (integer)
+      - `actual_hectares` (numeric)
+      - `created_at` (timestamp)
+  
+  2. Constraints
+    - Unique constraint on month
+  
+  3. Security
+    - Enable RLS on all tables
+    - Add read policies for authenticated users
 */
 
-DO $$
-DECLARE
-  v_date date;
-BEGIN
-  -- Generate dates from Nov 2024 to Dec 2026
-  FOR v_date IN 
-    SELECT generate_series(
-      '2024-11-01'::date,
-      '2026-12-01'::date,
-      '1 month'::interval
-    )::date
-  LOOP
-    -- Insert data for Phase 1
-    INSERT INTO phase1_monthly_data (month, planned_trees, planned_hectares)
-    VALUES (v_date, 400, 0.35)
-    ON CONFLICT (month) 
-    DO UPDATE SET
-      planned_trees = EXCLUDED.planned_trees,
-      planned_hectares = EXCLUDED.planned_hectares;
-    
-    -- Insert data for Phase 2
-    INSERT INTO phase2_monthly_data (month, planned_trees, planned_hectares)
-    VALUES (v_date, 500, 0.42)
-    ON CONFLICT (month) 
-    DO UPDATE SET
-      planned_trees = EXCLUDED.planned_trees,
-      planned_hectares = EXCLUDED.planned_hectares;
-    
-    -- Insert data for Phase 3
-    INSERT INTO phase3_monthly_data (month, planned_trees, planned_hectares)
-    VALUES (v_date, 350, 0.28)
-    ON CONFLICT (month) 
-    DO UPDATE SET
-      planned_trees = EXCLUDED.planned_trees,
-      planned_hectares = EXCLUDED.planned_hectares;
-  END LOOP;
-END $$;
+-- Phase 1 Monthly Data
+CREATE TABLE IF NOT EXISTS phase1_monthly_data (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  month date NOT NULL UNIQUE,
+  planned_trees integer,
+  planned_hectares numeric(10,2),
+  actual_trees integer,
+  actual_hectares numeric(10,2),
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE phase1_monthly_data ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow read access for authenticated users"
+  ON phase1_monthly_data
+  FOR SELECT
+  TO authenticated
+  USING (true);
+
+-- Phase 2 Monthly Data
+CREATE TABLE IF NOT EXISTS phase2_monthly_data (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  month date NOT NULL UNIQUE,
+  planned_trees integer,
+  planned_hectares numeric(10,2),
+  actual_trees integer,
+  actual_hectares numeric(10,2),
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE phase2_monthly_data ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow read access for authenticated users"
+  ON phase2_monthly_data
+  FOR SELECT
+  TO authenticated
+  USING (true);
+
+-- Phase 3 Monthly Data
+CREATE TABLE IF NOT EXISTS phase3_monthly_data (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  month date NOT NULL UNIQUE,
+  planned_trees integer,
+  planned_hectares numeric(10,2),
+  actual_trees integer,
+  actual_hectares numeric(10,2),
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE phase3_monthly_data ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow read access for authenticated users"
+  ON phase3_monthly_data
+  FOR SELECT
+  TO authenticated
+  USING (true);
