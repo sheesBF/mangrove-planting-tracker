@@ -7,11 +7,16 @@ function ProjectDetails() {
 
   const projectData = {
     totalTrees: 15000,
-    totalHectares: 12.5,
+    species: [
+      { name: "Ceriops tagal", trees: 4000 },
+      { name: "Rhizophora mucronata", trees: 4500 },
+      { name: "Avicennia marina", trees: 3500 },
+      { name: "Bruguiera gymnorrhiza", trees: 3000 }
+    ],
     phases: [
-      { id: 1, trees: 5000, hectares: 4.2 },
-      { id: 2, trees: 6000, hectares: 5.0 },
-      { id: 3, trees: 4000, hectares: 3.3 },
+      { id: 1, trees: 5000 },
+      { id: 2, trees: 6000 },
+      { id: 3, trees: 4000 },
     ]
   };
 
@@ -35,36 +40,53 @@ function ProjectDetails() {
 
       <div className="container mx-auto px-4 pt-24">
         <div className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm border border-slate-700/50">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="mb-8">
             <div className="bg-slate-700/30 rounded-lg p-6">
               <h3 className="text-xl font-semibold mb-2">Total Trees Planted</h3>
               <p className="text-4xl font-bold text-emerald-400">{projectData.totalTrees.toLocaleString()}</p>
             </div>
-            <div className="bg-slate-700/30 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-2">Total Hectares</h3>
-              <p className="text-4xl font-bold text-emerald-400">{projectData.totalHectares.toLocaleString()} ha</p>
-            </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-slate-700">
-                  <th className="text-left py-4 px-6">Phase</th>
-                  <th className="text-right py-4 px-6">Trees Planted</th>
-                  <th className="text-right py-4 px-6">Hectares</th>
-                </tr>
-              </thead>
-              <tbody>
-                {projectData.phases.map((phase) => (
-                  <tr key={phase.id} className="border-b border-slate-700/50 hover:bg-slate-700/20">
-                    <td className="py-4 px-6">Phase {phase.id}</td>
-                    <td className="text-right py-4 px-6">{phase.trees.toLocaleString()}</td>
-                    <td className="text-right py-4 px-6">{phase.hectares.toLocaleString()} ha</td>
+          <div className="grid grid-cols-1 gap-8">
+            <div className="overflow-x-auto">
+              <h3 className="text-xl font-semibold mb-4">Species Distribution</h3>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-slate-700">
+                    <th className="text-left py-4 px-6">Species</th>
+                    <th className="text-right py-4 px-6">Trees Planted</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {projectData.species.map((species) => (
+                    <tr key={species.name} className="border-b border-slate-700/50 hover:bg-slate-700/20">
+                      <td className="py-4 px-6 italic">{species.name}</td>
+                      <td className="text-right py-4 px-6">{species.trees.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="overflow-x-auto">
+              <h3 className="text-xl font-semibold mb-4">Phase Overview</h3>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-slate-700">
+                    <th className="text-left py-4 px-6">Phase</th>
+                    <th className="text-right py-4 px-6">Trees Planted</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {projectData.phases.map((phase) => (
+                    <tr key={phase.id} className="border-b border-slate-700/50 hover:bg-slate-700/20">
+                      <td className="py-4 px-6">Phase {phase.id}</td>
+                      <td className="text-right py-4 px-6">{phase.trees.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
