@@ -38,7 +38,7 @@ const Hero: React.FC = () => {
       <div
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: 'url("https://images.pexels.com/photos/2583852/pexels-photo-2583852.jpeg")',
+          backgroundImage: 'url("/mangrove.jpg")',
           backgroundPosition: 'center',
           backgroundSize: 'cover',
           transform: `translateY(${scrollY * 0.2}px)`,
