@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Trees as Tree, ArrowLeft } from 'lucide-react';
+import { Trees as Tree, ArrowLeft, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 
@@ -14,14 +14,9 @@ interface PhaseTotal {
 function Tracking() {
   const navigate = useNavigate();
   const [phaseTotals, setPhaseTotals] = useState<PhaseTotal[]>([]);
-  const [activeTab, setActiveTab] = useState<string>('Phase 1');
+  const [selectedPhase, setSelectedPhase] = useState<string | null>(null);
+  const [showMonths, setShowMonths] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [projectTotals, setProjectTotals] = useState({
-    planned_trees: 0,
-    planned_hectares: 0,
-    actual_trees: 0,
-    actual_hectares: 0,
-  });
 
   useEffect(() => {
     async function fetchPhaseTotals() {
@@ -31,31 +26,10 @@ function Tracking() {
           .select('*')
           .order('phase_name');
 
-        if (error) {
-          console.error('Error fetching phase totals:', error);
-          return;
-        }
-
-        if (data) {
-          setPhaseTotals(data);
-          
-          // Calculate project totals
-          const totals = data.reduce((acc, phase) => ({
-            planned_trees: acc.planned_trees + phase.total_planned_trees,
-            planned_hectares: acc.planned_hectares + phase.total_planned_hectares,
-            actual_trees: acc.actual_trees + phase.total_actual_trees,
-            actual_hectares: acc.actual_hectares + phase.total_actual_hectares,
-          }), {
-            planned_trees: 0,
-            planned_hectares: 0,
-            actual_trees: 0,
-            actual_hectares: 0,
-          });
-          
-          setProjectTotals(totals);
-        }
+        if (error) throw error;
+        setPhaseTotals(data || []);
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Error fetching phase totals:', error);
       } finally {
         setIsLoading(false);
       }
@@ -63,6 +37,18 @@ function Tracking() {
 
     fetchPhaseTotals();
   }, []);
+
+  const projectTotals = phaseTotals.reduce((acc, phase) => ({
+    planned_trees: acc.planned_trees + phase.total_planned_trees,
+    planned_hectares: acc.planned_hectares + phase.total_planned_hectares,
+    actual_trees: acc.actual_trees + phase.total_actual_trees,
+    actual_hectares: acc.actual_hectares + phase.total_actual_hectares
+  }), {
+    planned_trees: 0,
+    planned_hectares: 0,
+    actual_trees: 0,
+    actual_hectares: 0
+  });
 
   if (isLoading) {
     return (
@@ -90,11 +76,11 @@ function Tracking() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 min-h-screen flex items-center justify-center">
-        <div className="w-full max-w-4xl mt-24">
-          <div className="bg-slate-800/50 rounded-xl backdrop-blur-sm mb-8">
-            <h2 className="text-2xl font-bold p-6 border-b border-slate-700">Project Overview</h2>
-            <div className="p-6 grid grid-cols-2 gap-6">
+      <div className="container mx-auto px-4 pt-24 pb-12">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-slate-800/50 rounded-xl p-8 backdrop-blur-sm border border-slate-700/50 mb-8">
+            <h2 className="text-2xl font-bold mb-6">Project Overview</h2>
+            <div className="grid grid-cols-2 gap-6">
               <div>
                 <div className="mb-4">
                   <p className="text-sm text-white/70">Planned Trees</p>
@@ -126,73 +112,49 @@ function Tracking() {
             </div>
           </div>
 
-          <div className="bg-slate-800/50 rounded-xl backdrop-blur-sm">
-            <div className="border-b border-slate-700">
-              <div className="flex">
-                {phaseTotals.map((phase) => (
-                  <button
-                    key={phase.phase_name}
-                    onClick={() => setActiveTab(phase.phase_name)}
-                    className={`px-8 py-4 text-sm font-medium transition-colors relative ${
-                      activeTab === phase.phase_name
-                        ? 'text-emerald-400'
-                        : 'text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    {phase.phase_name}
-                    {activeTab === phase.phase_name && (
-                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400"></div>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="p-8">
-              {phaseTotals.map((phase) => (
-                <div
-                  key={phase.phase_name}
-                  className={`space-y-8 ${activeTab === phase.phase_name ? 'block' : 'hidden'}`}
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="bg-slate-700/30 rounded-lg p-6 backdrop-blur-sm">
-                      <h3 className="text-lg font-medium text-slate-300 mb-2">Trees</h3>
-                      <div className="space-y-4">
-                        <div>
-                          <p className="text-sm text-white/70">Planned</p>
-                          <p className="text-3xl font-bold text-emerald-400">
-                            {phase.total_planned_trees.toLocaleString()}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-white/70">Planted</p>
-                          <p className="text-3xl font-bold text-amber-400">
-                            {phase.total_actual_trees.toLocaleString()}
-                          </p>
-                        </div>
-                      </div>
+          <div className="space-y-6">
+            {phaseTotals.map((phase) => (
+              <div
+                key={phase.phase_name}
+                className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm border border-slate-700/50 hover:bg-slate-700/50 transition-all duration-300 cursor-pointer"
+                onClick={() => {
+                  setSelectedPhase(phase.phase_name);
+                  setShowMonths(true);
+                }}
+              >
+                <h3 className="text-xl font-semibold mb-4">{phase.phase_name}</h3>
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <div className="mb-3">
+                      <p className="text-sm text-white/70">Planned Trees</p>
+                      <p className="text-lg font-medium text-emerald-400">
+                        {phase.total_planned_trees.toLocaleString()}
+                      </p>
                     </div>
-                    <div className="bg-slate-700/30 rounded-lg p-6 backdrop-blur-sm">
-                      <h3 className="text-lg font-medium text-slate-300 mb-2">Hectares</h3>
-                      <div className="space-y-4">
-                        <div>
-                          <p className="text-sm text-white/70">Planned</p>
-                          <p className="text-3xl font-bold text-emerald-400">
-                            {phase.total_planned_hectares.toLocaleString()} ha
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-white/70">Covered</p>
-                          <p className="text-3xl font-bold text-amber-400">
-                            {phase.total_actual_hectares.toLocaleString()} ha
-                          </p>
-                        </div>
-                      </div>
+                    <div>
+                      <p className="text-sm text-white/70">Actual Trees</p>
+                      <p className="text-lg font-medium text-amber-400">
+                        {phase.total_actual_trees.toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="mb-3">
+                      <p className="text-sm text-white/70">Planned Hectares</p>
+                      <p className="text-lg font-medium text-emerald-400">
+                        {phase.total_planned_hectares.toLocaleString()} ha
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-white/70">Actual Hectares</p>
+                      <p className="text-lg font-medium text-amber-400">
+                        {phase.total_actual_hectares.toLocaleString()} ha
+                      </p>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
