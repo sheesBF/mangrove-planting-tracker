@@ -26,7 +26,10 @@ function Tracking() {
       <div className="container mx-auto px-4 min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-12 w-full max-w-5xl">
           {/* Project 1 Button */}
-          <button className="relative group overflow-hidden rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 p-6 w-64 h-48 transition-all duration-300 hover:scale-105 hover:shadow-xl">
+          <button 
+            onClick={() => navigate('/project/1')}
+            className="relative group overflow-hidden rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 p-6 w-64 h-48 transition-all duration-300 hover:scale-105 hover:shadow-xl"
+          >
             <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
             <div className="relative z-10">
               <h3 className="text-2xl font-bold text-white">Project 1</h3>
@@ -41,7 +44,10 @@ function Tracking() {
 
           {/* Phase Buttons */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <button className="relative group overflow-hidden rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 p-6 w-64 h-48 transition-all duration-300 hover:scale-105 hover:shadow-xl">
+            <button 
+              onClick={() => navigate('/phase/1')}
+              className="relative group overflow-hidden rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 p-6 w-64 h-48 transition-all duration-300 hover:scale-105 hover:shadow-xl"
+            >
               <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
               <div className="relative z-10">
                 <h3 className="text-2xl font-bold text-white">Phase 1</h3>
@@ -51,7 +57,10 @@ function Tracking() {
               </div>
             </button>
 
-            <button className="relative group overflow-hidden rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 p-6 w-64 h-48 transition-all duration-300 hover:scale-105 hover:shadow-xl">
+            <button 
+              onClick={() => navigate('/phase/2')}
+              className="relative group overflow-hidden rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 p-6 w-64 h-48 transition-all duration-300 hover:scale-105 hover:shadow-xl"
+            >
               <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
               <div className="relative z-10">
                 <h3 className="text-2xl font-bold text-white">Phase 2</h3>
@@ -61,7 +70,10 @@ function Tracking() {
               </div>
             </button>
 
-            <button className="relative group overflow-hidden rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 p-6 w-64 h-48 transition-all duration-300 hover:scale-105 hover:shadow-xl">
+            <button 
+              onClick={() => navigate('/phase/3')}
+              className="relative group overflow-hidden rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 p-6 w-64 h-48 transition-all duration-300 hover:scale-105 hover:shadow-xl"
+            >
               <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
               <div className="relative z-10">
                 <h3 className="text-2xl font-bold text-white">Phase 3</h3>
