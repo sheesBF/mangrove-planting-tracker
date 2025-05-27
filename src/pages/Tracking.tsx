@@ -36,18 +36,6 @@ function Tracking() {
     fetchPhaseTotals();
   }, []);
 
-  const projectTotals = phaseTotals.reduce((acc, phase) => ({
-    planned_trees: acc.planned_trees + phase.total_planned_trees,
-    planned_hectares: acc.planned_hectares + phase.total_planned_hectares,
-    actual_trees: acc.actual_trees + phase.total_actual_trees,
-    actual_hectares: acc.actual_hectares + phase.total_actual_hectares
-  }), {
-    planned_trees: 0,
-    planned_hectares: 0,
-    actual_trees: 0,
-    actual_hectares: 0
-  });
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
@@ -74,49 +62,47 @@ function Tracking() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 min-h-screen flex items-center justify-center">
-        <div className="w-full max-w-4xl mt-24">
-          <div className="space-y-6">
-            {phaseTotals.map((phase) => (
-              <div
-                key={phase.phase_name}
-                className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm border border-slate-700/50 hover:bg-slate-700/50 transition-all duration-300 cursor-pointer"
-                onClick={() => navigate(`/phase/${phase.phase_name.toLowerCase()}`)}
-              >
-                <h3 className="text-xl font-semibold mb-4">{phase.phase_name}</h3>
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <div className="mb-3">
-                      <p className="text-sm text-white/70">Planned Trees</p>
-                      <p className="text-lg font-medium text-emerald-400">
-                        {phase.total_planned_trees.toLocaleString()}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-white/70">Actual Trees</p>
-                      <p className="text-lg font-medium text-amber-400">
-                        {phase.total_actual_trees.toLocaleString()}
-                      </p>
-                    </div>
+      <div className="container mx-auto px-4 pt-24 pb-12">
+        <div className="grid gap-6">
+          {phaseTotals.map((phase) => (
+            <div
+              key={phase.phase_name}
+              className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm border border-slate-700/50 hover:bg-slate-700/50 transition-all duration-300 cursor-pointer"
+              onClick={() => navigate(`/phase/${phase.phase_name.toLowerCase()}`)}
+            >
+              <h3 className="text-xl font-semibold mb-4">{phase.phase_name}</h3>
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <div className="mb-3">
+                    <p className="text-sm text-white/70">Planned Trees</p>
+                    <p className="text-lg font-medium text-emerald-400">
+                      {phase.total_planned_trees.toLocaleString()}
+                    </p>
                   </div>
                   <div>
-                    <div className="mb-3">
-                      <p className="text-sm text-white/70">Planned Hectares</p>
-                      <p className="text-lg font-medium text-emerald-400">
-                        {phase.total_planned_hectares.toLocaleString()} ha
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-white/70">Actual Hectares</p>
-                      <p className="text-lg font-medium text-amber-400">
-                        {phase.total_actual_hectares.toLocaleString()} ha
-                      </p>
-                    </div>
+                    <p className="text-sm text-white/70">Actual Trees</p>
+                    <p className="text-lg font-medium text-amber-400">
+                      {phase.total_actual_trees.toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <div className="mb-3">
+                    <p className="text-sm text-white/70">Planned Hectares</p>
+                    <p className="text-lg font-medium text-emerald-400">
+                      {phase.total_planned_hectares.toLocaleString()} ha
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-white/70">Actual Hectares</p>
+                    <p className="text-lg font-medium text-amber-400">
+                      {phase.total_actual_hectares.toLocaleString()} ha
+                    </p>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
