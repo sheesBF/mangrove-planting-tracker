@@ -38,9 +38,8 @@ const Hero: React.FC = () => {
       <div
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: 'url("https://www.pexels.com/photo/scenic-mangrove-trees-at-low-tide-in-indonesia-31996018/")',
+          backgroundImage: 'url("https://images.pexels.com/photos/17037728/pexels-photo-17037728.jpeg")',
           backgroundPosition: 'center',
-          backgroundPositionY: '-400px',
           backgroundSize: 'cover',
           transform: `translateY(${scrollY * 0.2}px)`,
           opacity: isLoaded ? 1 : 0,
