@@ -14,7 +14,7 @@ function App() {
             <Hero />
           </div>
         } />
-        <Route path="/tracking" element={<Tracking />} />
+        {/* <Route path="/tracking" element={<Tracking />} /> */}
       </Routes>
     </Router>
   );
