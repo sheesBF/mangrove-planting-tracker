@@ -1,176 +1,48 @@
 import React, { useEffect, useState } from 'react';
-import { Trees as Tree, ArrowLeft, Calendar } from 'lucide-react';
+import { Trees as Tree, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 
-interface ProjectSummary {
-  totalTrees: number;
-  totalHectares: number;
-  totalActualTrees: number;
-  totalActualHectares: number;
-}
-
-interface PhaseSummary {
-  id: number;
-  totalTrees: number;
-  totalHectares: number;
-  totalActualTrees: number;
-  totalActualHectares: number;
-}
-
-interface MonthlyData {
-  month: string;
-  planned_trees: number;
-  planned_hectares: number;
-  actual_trees: number;
-  actual_hectares: number;
+interface PhaseTotal {
+  phase_name: string;
+  total_actual_trees: number;
+  total_actual_hectares: number;
 }
 
 function Tracking() {
   const navigate = useNavigate();
-  const [projectSummary, setProjectSummary] = useState<ProjectSummary | null>(null);
-  const [phaseSummaries, setPhaseSummaries] = useState<PhaseSummary[]>([]);
-  const [selectedPhase, setSelectedPhase] = useState<number | null>(null);
-  const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
-  const [showMonths, setShowMonths] = useState(false);
+  const [phaseTotals, setPhaseTotals] = useState<PhaseTotal[]>([]);
+  const [activeTab, setActiveTab] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchSummaries() {
+    async function fetchPhaseTotals() {
       try {
-        // Fetch summaries for each phase
-        const phases = [1, 2];  // Only phases 1 and 2 exist in the database
-        const phaseData = await Promise.all(
-          phases.map(async (phaseNum) => {
-            console.log(`Fetching data for phase${phaseNum}_monthly_data`);
-            
-            const { data, error } = await supabase
-              .from(`phase${phaseNum}_monthly_data`)
-              .select('*');
+        const { data, error } = await supabase
+          .from('phase_totals')
+          .select('phase_name, total_actual_trees, total_actual_hectares')
+          .order('phase_name');
 
-            if (error) {
-              console.error(`Error fetching phase ${phaseNum} data:`, error);
-              throw error;
-            }
+        if (error) {
+          console.error('Error fetching phase totals:', error);
+          return;
+        }
 
-            console.log(`Raw data for phase ${phaseNum}:`, data);
-
-            if (!data || data.length === 0) {
-              console.log(`No data found for phase ${phaseNum}`);
-              return {
-                id: phaseNum,
-                totalTrees: 0,
-                totalHectares: 0,
-                totalActualTrees: 0,
-                totalActualHectares: 0
-              };
-            }
-
-            // Calculate totals with explicit type conversion
-            const totalTrees = data.reduce((sum, item) => {
-              const trees = Number(item.planned_trees) || 0;
-              console.log(`Phase ${phaseNum} - Planned trees for a row:`, trees);
-              return sum + trees;
-            }, 0);
-
-            const totalHectares = data.reduce((sum, item) => {
-              const hectares = Number(item.planned_hectares) || 0;
-              console.log(`Phase ${phaseNum} - Planned hectares for a row:`, hectares);
-              return sum + hectares;
-            }, 0);
-
-            const totalActualTrees = data.reduce((sum, item) => {
-              const trees = Number(item.actual_trees) || 0;
-              console.log(`Phase ${phaseNum} - Actual trees for a row:`, trees);
-              return sum + trees;
-            }, 0);
-
-            const totalActualHectares = data.reduce((sum, item) => {
-              const hectares = Number(item.actual_hectares) || 0;
-              console.log(`Phase ${phaseNum} - Actual hectares for a row:`, hectares);
-              return sum + hectares;
-            }, 0);
-
-            console.log(`Phase ${phaseNum} totals:`, {
-              totalTrees,
-              totalHectares,
-              totalActualTrees,
-              totalActualHectares
-            });
-
-            return {
-              id: phaseNum,
-              totalTrees,
-              totalHectares,
-              totalActualTrees,
-              totalActualHectares
-            };
-          })
-        );
-
-        console.log('Final phase data:', phaseData);
-        setPhaseSummaries(phaseData);
-
-        // Calculate project totals
-        const projectTotalTrees = phaseData.reduce((sum, phase) => sum + phase.totalTrees, 0);
-        const projectTotalHectares = phaseData.reduce((sum, phase) => sum + phase.totalHectares, 0);
-        const projectTotalActualTrees = phaseData.reduce((sum, phase) => sum + phase.totalActualTrees, 0);
-        const projectTotalActualHectares = phaseData.reduce((sum, phase) => sum + phase.totalActualHectares, 0);
-
-        console.log('Project totals:', {
-          projectTotalTrees,
-          projectTotalHectares,
-          projectTotalActualTrees,
-          projectTotalActualHectares
-        });
-
-        setProjectSummary({
-          totalTrees: projectTotalTrees,
-          totalHectares: projectTotalHectares,
-          totalActualTrees: projectTotalActualTrees,
-          totalActualHectares: projectTotalActualHectares
-        });
+        if (data && data.length > 0) {
+          setPhaseTotals(data);
+          setActiveTab(data[0].phase_name);
+        }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error:', error);
+      } finally {
+        setIsLoading(false);
       }
     }
 
-    fetchSummaries();
+    fetchPhaseTotals();
   }, []);
 
-  const handlePhaseClick = async (phaseId: number) => {
-    try {
-      setSelectedPhase(phaseId);
-      setShowMonths(true);
-      
-      const { data, error } = await supabase
-        .from(`phase${phaseId}_monthly_data`)
-        .select('*')
-        .order('month');
-      
-      if (error) {
-        console.error('Error fetching monthly data:', error);
-        return;
-      }
-
-      console.log(`Monthly data for phase ${phaseId}:`, data);
-      setMonthlyData(data || []);
-    } catch (error) {
-      console.error('Error handling phase click:', error);
-    }
-  };
-
-  const handleMonthClick = (month: string) => {
-    if (selectedPhase) {
-      navigate(`/phase/${selectedPhase}?month=${month}`);
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-  };
-
-  if (!projectSummary || phaseSummaries.length === 0) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-400"></div>
@@ -186,112 +58,65 @@ function Tracking() {
             <Tree className="h-6 w-6 text-emerald-400" />
             <h1 className="text-xl font-semibold tracking-tight">MozBlue Monitoring</h1>
           </div>
-          <div className="flex items-center space-x-4">
-            {showMonths && (
-              <button
-                onClick={() => setShowMonths(false)}
-                className="flex items-center space-x-2 text-emerald-400 hover:text-emerald-300 transition-colors"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span>Back to Phases</span>
-              </button>
-            )}
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center space-x-2 text-emerald-400 hover:text-emerald-300 transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Back to Home</span>
-            </button>
-          </div>
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center space-x-2 text-emerald-400 hover:text-emerald-300 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back to Home</span>
+          </button>
         </div>
       </header>
 
       <div className="container mx-auto px-4 min-h-screen flex items-center justify-center">
-        {!showMonths ? (
-          <div className="w-full max-w-4xl mt-24">
-            <div className="bg-slate-800/50 rounded-xl p-8 backdrop-blur-sm">
-              <h2 className="text-2xl font-bold mb-6">Project Overview</h2>
-              <div className="grid grid-cols-2 gap-6 mb-8">
-                <div>
-                  <div className="mb-4">
-                    <p className="text-sm text-white/70">Planned Trees</p>
-                    <p className="text-3xl font-bold text-emerald-400">{projectSummary.totalTrees.toLocaleString()}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-white/70">Actual Trees</p>
-                    <p className="text-3xl font-bold text-amber-400">{projectSummary.totalActualTrees.toLocaleString()}</p>
-                  </div>
-                </div>
-                <div>
-                  <div className="mb-4">
-                    <p className="text-sm text-white/70">Planned Hectares</p>
-                    <p className="text-3xl font-bold text-emerald-400">{projectSummary.totalHectares.toLocaleString()} ha</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-white/70">Actual Hectares</p>
-                    <p className="text-3xl font-bold text-amber-400">{projectSummary.totalActualHectares.toLocaleString()} ha</p>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-4">
-                {phaseSummaries.map((phase) => (
-                  <div 
-                    key={phase.id}
-                    onClick={() => handlePhaseClick(phase.id)}
-                    className="bg-slate-700/30 rounded-lg p-6 hover:bg-slate-700/50 transition-colors cursor-pointer"
+        <div className="w-full max-w-4xl mt-24">
+          <div className="bg-slate-800/50 rounded-xl backdrop-blur-sm">
+            <div className="border-b border-slate-700">
+              <div className="flex">
+                {phaseTotals.map((phase) => (
+                  <button
+                    key={phase.phase_name}
+                    onClick={() => setActiveTab(phase.phase_name)}
+                    className={`px-8 py-4 text-sm font-medium transition-colors relative ${
+                      activeTab === phase.phase_name
+                        ? 'text-emerald-400'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
                   >
-                    <h3 className="text-xl font-semibold mb-4">Phase {phase.id}</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <div className="mb-3">
-                          <p className="text-sm text-white/70">Planned Trees</p>
-                          <p className="text-lg font-medium text-emerald-400">{phase.totalTrees.toLocaleString()}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-white/70">Actual Trees</p>
-                          <p className="text-lg font-medium text-amber-400">{phase.totalActualTrees.toLocaleString()}</p>
-                        </div>
-                      </div>
-                      <div>
-                        <div className="mb-3">
-                          <p className="text-sm text-white/70">Planned Hectares</p>
-                          <p className="text-lg font-medium text-emerald-400">{phase.totalHectares.toLocaleString()} ha</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-white/70">Actual Hectares</p>
-                          <p className="text-lg font-medium text-amber-400">{phase.totalActualHectares.toLocaleString()} ha</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                    {phase.phase_name}
+                    {activeTab === phase.phase_name && (
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400"></div>
+                    )}
+                  </button>
                 ))}
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="w-full max-w-4xl mt-24">
-            <h2 className="text-2xl font-bold mb-6">Select Month for Phase {selectedPhase}</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {monthlyData.map((data) => (
-                <button
-                  key={data.month}
-                  onClick={() => handleMonthClick(data.month)}
-                  className="flex items-center space-x-3 p-4 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-colors"
+
+            <div className="p-8">
+              {phaseTotals.map((phase) => (
+                <div
+                  key={phase.phase_name}
+                  className={`space-y-8 ${activeTab === phase.phase_name ? 'block' : 'hidden'}`}
                 >
-                  <Calendar className="h-5 w-5 text-emerald-400" />
-                  <div className="text-left">
-                    <p className="font-medium">{formatDate(data.month)}</p>
-                    <div className="text-sm">
-                      <p className="text-emerald-400">Planned: {data.planned_trees.toLocaleString()} trees</p>
-                      <p className="text-amber-400">Actual: {(data.actual_trees || 0).toLocaleString()} trees</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="bg-slate-700/30 rounded-lg p-6 backdrop-blur-sm">
+                      <h3 className="text-lg font-medium text-slate-300 mb-2">Total Trees Planted</h3>
+                      <p className="text-4xl font-bold text-emerald-400">
+                        {phase.total_actual_trees.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="bg-slate-700/30 rounded-lg p-6 backdrop-blur-sm">
+                      <h3 className="text-lg font-medium text-slate-300 mb-2">Total Hectares Covered</h3>
+                      <p className="text-4xl font-bold text-emerald-400">
+                        {phase.total_actual_hectares.toLocaleString()} ha
+                      </p>
                     </div>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
