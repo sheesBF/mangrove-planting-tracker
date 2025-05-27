@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Hero: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsLoaded(true);
@@ -53,15 +55,14 @@ const Hero: React.FC = () => {
           transition: 'opacity 2s ease-in-out, transform 2s ease-in-out'
         }}
       >
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white text-center mb-4">
-          Restoring Our Mangroves
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white text-center mb-8">
+          MozBlue Project 1 Planting
         </h1>
-        <p className="text-lg md:text-xl text-white/90 text-center max-w-2xl mb-8">
-          Join us in protecting and restoring these vital coastal ecosystems. 
-          Every mangrove planted is a step towards a more resilient future.
-        </p>
-        <button className="px-8 py-3 bg-white/10 backdrop-blur-sm text-white rounded-full border border-white/30 hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
-          Get Involved
+        <button 
+          onClick={() => navigate('/tracking')}
+          className="px-8 py-3 bg-white/10 backdrop-blur-sm text-white rounded-full border border-white/30 hover:bg-white/20 transition-all duration-300 transform hover:scale-105"
+        >
+          Track Progress
         </button>
       </div>
     </section>
