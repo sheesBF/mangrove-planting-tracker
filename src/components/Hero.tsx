@@ -18,7 +18,7 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden">
+    <section className="relative h-screen w-full overflow-hidden bg-slate-900">
       <div 
         className="absolute inset-0 bg-black/40 z-10"
         style={{
@@ -32,18 +32,6 @@ const Hero: React.FC = () => {
         style={{
           opacity: isLoaded ? 1 : 0,
           transition: 'opacity 2s ease-in-out'
-        }}
-      />
-      
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: 'url("https://images.pexels.com/photos/17164084/pexels-photo-17164084.jpeg")',
-          backgroundPosition: 'center',
-          backgroundSize: 'cover',
-          transform: `translateY(${scrollY * 0.2}px)`,
-          opacity: isLoaded ? 1 : 0,
-          transition: 'opacity 1s ease-in-out'
         }}
       />
       
