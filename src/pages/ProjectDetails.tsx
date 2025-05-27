@@ -16,33 +16,38 @@ function ProjectDetails() {
 
   useEffect(() => {
     async function fetchProjectData() {
-      // Join monthly_data with phases using phase_id
-      const { data: monthlyData } = await supabase
+      // Join monthly_data with phases using phase_id - updated query format
+      const { data: monthlyData, error } = await supabase
         .from('monthly_data')
         .select(`
           planned_trees,
           planned_hectares,
-          phase:phase_id (
+          phases!monthly_data_phase_id_fkey (
             id,
             phase_number
           )
         `)
         .eq('project_id', '11111111-1111-1111-1111-111111111111');
 
+      if (error) {
+        console.error('Error fetching monthly data:', error);
+        return;
+      }
+
       if (monthlyData) {
         const totalTrees = monthlyData.reduce((sum, item) => sum + (item.planned_trees || 0), 0);
         const totalHectares = monthlyData.reduce((sum, item) => sum + (item.planned_hectares || 0), 0);
         
-        // Group by phase and sum trees
+        // Group by phase and sum trees - updated to use new phases reference
         const phases = monthlyData.reduce((acc, item) => {
-          if (!item.phase) return acc;
-          const phase = acc.find(p => p.id === item.phase.id);
+          if (!item.phases) return acc;
+          const phase = acc.find(p => p.id === item.phases.id);
           if (phase) {
             phase.trees += item.planned_trees || 0;
           } else {
             acc.push({
-              id: item.phase.id,
-              phase_number: item.phase.phase_number,
+              id: item.phases.id,
+              phase_number: item.phases.phase_number,
               trees: item.planned_trees || 0
             });
           }
