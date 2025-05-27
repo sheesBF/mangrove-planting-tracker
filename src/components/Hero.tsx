@@ -18,7 +18,7 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-slate-900">
+    <section className="relative h-[70vh] w-full overflow-hidden">
       <div 
         className="absolute inset-0 bg-black/40 z-10"
         style={{

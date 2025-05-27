@@ -33,7 +33,8 @@ const PhaseTotals: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full max-w-4xl mx-auto mt-8 p-6">
+    <div className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm">
+      <h2 className="text-2xl font-bold mb-6">Phase Overview</h2>
       <div className="mb-6 border-b border-slate-700">
         <div className="flex space-x-2">
           {phaseTotals.map((phase) => (
@@ -58,13 +59,13 @@ const PhaseTotals: React.FC = () => {
           className={`space-y-6 ${activeTab === phase.phase_name ? 'block' : 'hidden'}`}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm">
+            <div className="bg-slate-700/30 rounded-lg p-6">
               <h3 className="text-lg font-medium text-white/80 mb-2">Total Trees Planted</h3>
               <p className="text-4xl font-bold text-emerald-400">
                 {phase.total_actual_trees.toLocaleString()}
               </p>
             </div>
-            <div className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm">
+            <div className="bg-slate-700/30 rounded-lg p-6">
               <h3 className="text-lg font-medium text-white/80 mb-2">Total Hectares Covered</h3>
               <p className="text-4xl font-bold text-emerald-400">
                 {phase.total_actual_hectares.toLocaleString()} ha
