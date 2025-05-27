@@ -23,20 +23,10 @@ ChartJS.register(
   Legend
 );
 
-interface ChartState {
-  id: string;
-  showCumulative: boolean;
-}
-
 function MonthlyStats() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [chartStates, setChartStates] = useState<Record<string, ChartState>>({
-    plannedTrees: { id: 'plannedTrees', showCumulative: false },
-    plannedHa: { id: 'plannedHa', showCumulative: false },
-    actualTrees: { id: 'actualTrees', showCumulative: false },
-    actualHa: { id: 'actualHa', showCumulative: false }
-  });
+  const [showCumulative, setShowCumulative] = useState(false);
 
   // Generate dates from November 2024 to December 2026
   const labels = Array.from({ length: 26 }, (_, i) => {
@@ -74,8 +64,8 @@ function MonthlyStats() {
     return {
       labels: chartLabels,
       datasets: [{
-        label: `${chartStates[key].showCumulative ? 'Cumulative' : 'Monthly'} ${label}`,
-        data: chartStates[key].showCumulative ? cumulative : monthly,
+        label: `${showCumulative ? 'Cumulative' : 'Monthly'} ${label}`,
+        data: showCumulative ? cumulative : monthly,
         borderColor: color,
         backgroundColor: color,
         tension: 0.1,
@@ -125,16 +115,6 @@ function MonthlyStats() {
     },
   };
 
-  const toggleCumulative = (chartId: string) => {
-    setChartStates(prev => ({
-      ...prev,
-      [chartId]: {
-        ...prev[chartId],
-        showCumulative: !prev[chartId].showCumulative
-      }
-    }));
-  };
-
   const ChartContainer = ({ 
     title, 
     chartId, 
@@ -147,19 +127,7 @@ function MonthlyStats() {
     color: string; 
   }) => (
     <div className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm border border-slate-700/50">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-semibold">{title}</h3>
-        <button
-          onClick={() => toggleCumulative(chartId)}
-          className={`px-4 py-2 rounded-lg transition-colors ${
-            chartStates[chartId].showCumulative
-              ? 'bg-emerald-500 text-white'
-              : 'bg-slate-700 text-white/70 hover:bg-slate-600'
-          }`}
-        >
-          {chartStates[chartId].showCumulative ? 'Show Monthly' : 'Show Cumulative'}
-        </button>
-      </div>
+      <h3 className="text-xl font-semibold mb-4">{title}</h3>
       <div className="h-[300px]">
         <Line options={chartOptions} data={getChartData(chartId, label, color)} />
       </div>
@@ -174,13 +142,25 @@ function MonthlyStats() {
             <Tree className="h-6 w-6 text-emerald-400" />
             <h1 className="text-xl font-semibold tracking-tight">Monthly Statistics - {id === '1' ? 'Project' : `Phase ${id}`}</h1>
           </div>
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center space-x-2 text-emerald-400 hover:text-emerald-300 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back</span>
-          </button>
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => setShowCumulative(!showCumulative)}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                showCumulative
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-slate-700 text-white/70 hover:bg-slate-600'
+              }`}
+            >
+              {showCumulative ? 'Show Monthly' : 'Show Cumulative'}
+            </button>
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center space-x-2 text-emerald-400 hover:text-emerald-300 transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back</span>
+            </button>
+          </div>
         </div>
       </header>
 
