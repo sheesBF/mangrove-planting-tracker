@@ -126,57 +126,40 @@ function Tracking() {
 
       <div className="container mx-auto px-4 min-h-screen flex items-center justify-center">
         {!showMonths ? (
-          <div className="flex flex-col items-center gap-12 w-full max-w-5xl">
-            {/* Project Button */}
-            <button 
-              onClick={() => navigate('/project/1')}
-              className="relative group overflow-hidden rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 p-6 w-full max-w-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
-            >
-              <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
-              <div className="relative z-10">
-                <h3 className="text-2xl font-bold text-white mb-2">Project 1</h3>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="text-white/80">Total Trees: {projectSummary.totalTrees.toLocaleString()}</p>
-                    <p className="text-white/80">Total Hectares: {projectSummary.totalHectares.toLocaleString()} ha</p>
-                  </div>
-                  <Tree className="h-8 w-8 text-white/30" />
+          <div className="w-full max-w-4xl mt-24">
+            <div className="bg-slate-800/50 rounded-xl p-8 backdrop-blur-sm">
+              <h2 className="text-2xl font-bold mb-6">Project Overview</h2>
+              <div className="grid grid-cols-2 gap-6 mb-8">
+                <div>
+                  <p className="text-sm text-white/70">Total Trees</p>
+                  <p className="text-3xl font-bold text-emerald-400">{projectSummary.totalTrees.toLocaleString()}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-white/70">Total Hectares</p>
+                  <p className="text-3xl font-bold text-emerald-400">{projectSummary.totalHectares.toLocaleString()} ha</p>
                 </div>
               </div>
-            </button>
-
-            {/* Decorative Line */}
-            <div className="w-px h-12 bg-emerald-400/30"></div>
-
-            {/* Phase Buttons */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-              {phaseSummaries.map((phase) => {
-                const gradientColors = {
-                  1: 'from-blue-500 to-blue-600',
-                  2: 'from-emerald-500 to-emerald-600',
-                  3: 'from-purple-500 to-purple-600'
-                }[phase.id];
-
-                return (
-                  <button 
+              <div className="space-y-4">
+                {phaseSummaries.map((phase) => (
+                  <div 
                     key={phase.id}
                     onClick={() => handlePhaseClick(phase.id)}
-                    className={`relative group overflow-hidden rounded-xl bg-gradient-to-r ${gradientColors} p-6 transition-all duration-300 hover:scale-105 hover:shadow-xl`}
+                    className="bg-slate-700/30 rounded-lg p-6 hover:bg-slate-700/50 transition-colors cursor-pointer"
                   >
-                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                    <div className="relative z-10">
-                      <h3 className="text-2xl font-bold text-white mb-2">Phase {phase.id}</h3>
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="text-white/80 text-sm">Trees: {phase.totalTrees.toLocaleString()}</p>
-                          <p className="text-white/80 text-sm">Hectares: {phase.totalHectares.toLocaleString()} ha</p>
-                        </div>
-                        <Tree className="h-8 w-8 text-white/30" />
+                    <h3 className="text-xl font-semibold mb-2">Phase {phase.id}</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-white/70">Trees</p>
+                        <p className="text-lg font-medium">{phase.totalTrees.toLocaleString()}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-white/70">Hectares</p>
+                        <p className="text-lg font-medium">{phase.totalHectares.toLocaleString()} ha</p>
                       </div>
                     </div>
-                  </button>
-                );
-              })}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         ) : (
