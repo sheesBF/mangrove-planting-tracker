@@ -16,11 +16,10 @@ function PhaseDetails() {
 
   useEffect(() => {
     async function fetchPhaseData() {
-      // Fetch monthly data for the phase
+      // Fetch monthly data from the phase-specific table
       const { data: monthlyData } = await supabase
-        .from('monthly_data')
-        .select('planned_trees, planned_hectares')
-        .eq('phase_id', `22222222-2222-2222-2222-22222222222${id}`);
+        .from(`phase${id}_monthly_data`)
+        .select('planned_trees, planned_hectares');
 
       if (monthlyData) {
         const totalTrees = monthlyData.reduce((sum, item) => sum + (item.planned_trees || 0), 0);
