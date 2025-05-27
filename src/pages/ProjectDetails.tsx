@@ -16,13 +16,13 @@ function ProjectDetails() {
 
   useEffect(() => {
     async function fetchProjectData() {
-      // Fetch project data with correct table reference
+      // Join monthly_data with phases using phase_id
       const { data: monthlyData } = await supabase
         .from('monthly_data')
         .select(`
           planned_trees,
           planned_hectares,
-          phases (
+          phase:phase_id (
             id,
             phase_number
           )
@@ -35,14 +35,14 @@ function ProjectDetails() {
         
         // Group by phase and sum trees
         const phases = monthlyData.reduce((acc, item) => {
-          if (!item.phases) return acc;
-          const phase = acc.find(p => p.id === item.phases.id);
+          if (!item.phase) return acc;
+          const phase = acc.find(p => p.id === item.phase.id);
           if (phase) {
             phase.trees += item.planned_trees || 0;
           } else {
             acc.push({
-              id: item.phases.id,
-              phase_number: item.phases.phase_number,
+              id: item.phase.id,
+              phase_number: item.phase.phase_number,
               trees: item.planned_trees || 0
             });
           }
