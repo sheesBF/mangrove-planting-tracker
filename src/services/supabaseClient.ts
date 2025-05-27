@@ -8,3 +8,19 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Test query function
+export const testConnection = async () => {
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .limit(1);
+  
+  if (error) {
+    console.error('Database connection error:', error);
+    return false;
+  }
+  
+  console.log('Database connection successful');
+  return true;
+};
