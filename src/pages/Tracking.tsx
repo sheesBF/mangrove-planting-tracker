@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Trees as Tree, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -78,7 +77,7 @@ function Tracking() {
         <div className="absolute w-full h-full [backface-visibility:hidden]">
           {front}
         </div>
-        <div className="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] flex items-center justify-center text-white text-lg font-semibold bg-slate-800/90 rounded-2xl">
+        <div className="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] flex items-center justify-center text-white text-lg font-semibold bg-slate-800/90 rounded-2xl cursor-pointer">
           {back}
         </div>
       </div>
@@ -128,10 +127,7 @@ function Tracking() {
                 </div>
               }
               back={
-                <div
-                  className="cursor-pointer"
-                  onClick={() => navigate('/tracking')}
-                >
+                <div onClick={() => navigate('/phase/1')}>
                   Monthly data and charts
                 </div>
               }
@@ -166,10 +162,7 @@ function Tracking() {
                       </div>
                     }
                     back={
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => navigate(`/phase/${num}`)}
-                      >
+                      <div onClick={() => navigate(`/phase/${num}`)}>
                         Monthly data and charts
                       </div>
                     }
