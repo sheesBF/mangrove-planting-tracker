@@ -79,7 +79,7 @@ function Tracking() {
           {front}
         </div>
         <div className="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] flex items-center justify-center text-white text-lg font-semibold bg-slate-800/90 rounded-2xl">
-          Monthly data and charts
+          {back}
         </div>
       </div>
     </div>
@@ -114,27 +114,6 @@ function Tracking() {
             <FlipCard
               front={
                 <div className="relative w-full h-full px-6 py-6 text-white bg-emerald-800/60 backdrop-blur-sm hover:bg-emerald-700/80 rounded-2xl shadow-xl overflow-hidden">
-                  <div
-                    className="absolute bottom-0 left-0 w-full overflow-hidden z-0"
-                    style={{ height: `${projectPercent}%` }}
-                  >
-                    <div className="relative w-[200%] h-full animate-waveMotion">
-                      {[0, 100].map((left, i) => (
-                        <svg
-                          key={i}
-                          className={`absolute top-0 ${left === 0 ? 'left-0' : 'left-[100%]'} w-full h-full`}
-                          viewBox="0 0 1440 320"
-                          preserveAspectRatio="none"
-                        >
-                          <path
-                            fill="rgba(255, 255, 255, 0.25)"
-                            d="M0,160L30,176C60,192,120,224,180,213.3C240,203,300,149,360,149.3C420,149,480,203,540,197.3C600,192,660,128,720,117.3C780,107,840,149,900,176C960,203,1020,213,1080,213.3C1140,213,1200,203,1260,197.3C1320,192,1380,192,1410,192L1440,192L1440,320L0,320Z"
-                          />
-                        </svg>
-                      ))}
-                    </div>
-                  </div>
-
                   <div className="relative z-10 flex flex-col items-center justify-between h-full">
                     <div className="text-4xl font-bold mb-3">Project 1</div>
                     <div className="text-sm font-medium">
@@ -148,7 +127,14 @@ function Tracking() {
                   </div>
                 </div>
               }
-              back={<></>}
+              back={
+                <div
+                  className="cursor-pointer"
+                  onClick={() => navigate('/tracking')}
+                >
+                  Monthly data and charts
+                </div>
+              }
             />
           </div>
 
@@ -166,27 +152,6 @@ function Tracking() {
                   <FlipCard
                     front={
                       <div className="relative w-full h-full px-6 py-5 text-white bg-slate-800/60 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden">
-                        <div
-                          className="absolute bottom-0 left-0 w-full overflow-hidden z-0"
-                          style={{ height: `${percent}%` }}
-                        >
-                          <div className="relative w-[200%] h-full animate-waveMotion">
-                            {[0, 100].map((left, i) => (
-                              <svg
-                                key={i}
-                                className={`absolute top-0 ${left === 0 ? 'left-0' : 'left-[100%]'} w-full h-full`}
-                                viewBox="0 0 1440 320"
-                                preserveAspectRatio="none"
-                              >
-                                <path
-                                  fill="rgba(34, 197, 94, 0.4)"
-                                  d="M0,160L30,176C60,192,120,224,180,213.3C240,203,300,149,360,149.3C420,149,480,203,540,197.3C600,192,660,128,720,117.3C780,107,840,149,900,176C960,203,1020,213,1080,213.3C1140,213,1200,203,1260,197.3C1320,192,1380,192,1410,192L1440,192L1440,320L0,320Z"
-                                />
-                              </svg>
-                            ))}
-                          </div>
-                        </div>
-
                         <div className="relative z-10 flex flex-col h-full justify-between">
                           <div className="text-3xl font-bold text-center">Phase {num}</div>
                           <div className="text-sm font-medium">
@@ -200,7 +165,14 @@ function Tracking() {
                         </div>
                       </div>
                     }
-                    back={<></>}
+                    back={
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => navigate(`/phase/${num}`)}
+                      >
+                        Monthly data and charts
+                      </div>
+                    }
                   />
                 </div>
               );
