@@ -72,43 +72,50 @@ const Project1MonthlyData = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <MultiLineChartCard
               title="Planted Trees Over Time"
-              data={{
-                labels: months,
-                datasets: [
-                  {
-                    label: "Planned Trees",
-                    data: plannedTrees,
-                    borderColor: "#34d399",
-                    tension: 0.3,
-                  },
-                  {
-                    label: "Actual Trees",
-                    data: actualTrees,
-                    borderColor: "#fbbf24",
-                    tension: 0.3,
-                  },
-                ],
-              }}
+              subtitle="Cumulative count"
+              theme="dark"
+              data={[
+                {
+                  name: "Planned Trees",
+                  color: "#34d399",
+                  data: months.map((month, i) => ({
+                    name: month,
+                    value: plannedTrees[i] || 0
+                  }))
+                },
+                {
+                  name: "Actual Trees",
+                  color: "#fbbf24",
+                  data: months.map((month, i) => ({
+                    name: month,
+                    value: actualTrees[i] || 0
+                  }))
+                }
+              ]}
             />
+            
             <MultiLineChartCard
               title="Planted Area (ha) Over Time"
-              data={{
-                labels: months,
-                datasets: [
-                  {
-                    label: "Planned Area",
-                    data: plannedHectares,
-                    borderColor: "#3b82f6",
-                    tension: 0.3,
-                  },
-                  {
-                    label: "Actual Area",
-                    data: actualHectares,
-                    borderColor: "#f472b6",
-                    tension: 0.3,
-                  },
-                ],
-              }}
+              subtitle="Cumulative area"
+              theme="dark"
+              data={[
+                {
+                  name: "Planned Area",
+                  color: "#3b82f6",
+                  data: months.map((month, i) => ({
+                    name: month,
+                    value: plannedHectares[i] || 0
+                  }))
+                },
+                {
+                  name: "Actual Area",
+                  color: "#f472b6",
+                  data: months.map((month, i) => ({
+                    name: month,
+                    value: actualHectares[i] || 0
+                  }))
+                }
+              ]}
             />
           </div>
         ) : (
