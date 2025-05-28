@@ -2,6 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Trees as Tree, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
+import Header from "../components/Header"; 
+
+<Header />
+
+
 
 interface PhaseTotal {
   phase_name: string;
