@@ -5,12 +5,20 @@ export default {
     extend: {
       animation: {
         waveMotion: 'waveMotion 6s linear infinite',
+        flipCard: 'flipCard 0.6s ease-in-out',
       },
       keyframes: {
         waveMotion: {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
         },
+        flipCard: {
+          '0%': { transform: 'rotateY(0deg)' },
+          '100%': { transform: 'rotateY(180deg)' },
+        },
+      },
+      transformOrigin: {
+        center: 'center',
       },
     },
   },
