@@ -24,8 +24,17 @@ function Tracking() {
         </div>
       </header>
 
-      {/* Centered Phase buttons */}
-      <div className="flex items-center justify-center min-h-screen pt-20">
+      {/* Tree-style buttons */}
+      <div className="flex flex-col items-center justify-center min-h-screen pt-20 gap-8">
+        {/* Project Button */}
+        <button
+          onClick={() => navigate('/project/1')}
+          className="w-[624px] max-w-[90vw] h-24 text-3xl font-bold bg-sky-500 hover:bg-sky-400 text-white rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
+        >
+          Project 1
+        </button>
+
+        {/* Phase Buttons */}
         <div className="flex flex-col md:flex-row gap-6">
           {[1, 2, 3].map((num) => (
             <button
