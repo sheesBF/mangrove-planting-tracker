@@ -84,7 +84,6 @@ function Tracking() {
         </div>
       </header>
 
-      {/* Main Content */}
       {isLoading ? (
         <div className="flex items-center justify-center h-screen">
           <div className="text-white">Loading...</div>
@@ -115,21 +114,33 @@ function Tracking() {
               return (
                 <div
                   key={num}
-                  className="relative w-72 h-48 p-5 text-white bg-emerald-600/80 backdrop-blur-sm hover:bg-emerald-500/90 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 flex flex-col justify-between text-left overflow-hidden"
+                  className="relative w-72 h-48 px-6 py-5 text-white bg-emerald-600/40 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden transition-all duration-300 transform hover:scale-105"
                 >
-                  {/* Wave Progress Background */}
+                  {/* Liquid fill layer */}
                   <div
-                    className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-emerald-400/40 to-transparent animate-pulse"
-                    style={{ height: `${percent}%`, zIndex: 0 }}
+                    className="absolute bottom-0 left-0 w-full animate-[pulse_3s_infinite] z-0"
+                    style={{
+                      height: `${percent}%`,
+                      background: `radial-gradient(circle at 50% 120%, rgba(52, 211, 153, 0.5) 0%, rgba(16, 185, 129, 0.6) 60%, rgba(5, 150, 105, 0.8) 100%)`,
+                      transition: 'height 0.8s ease-in-out',
+                    }}
                   />
 
+                  {/* Foreground content */}
                   <div className="relative z-10 flex flex-col h-full justify-between">
-                    <div className="text-3xl font-bold">Phase {num}</div>
-                    <div className="text-base font-medium whitespace-pre">
-                      Planted # - {stats.trees.toLocaleString()}{'\n'}
-                      {'        '}area - {stats.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })} ha
+                    <div className="text-3xl font-bold text-center">Phase {num}</div>
+
+                    <div className="text-sm font-medium">
+                      <div className="text-center mb-1">Planted</div>
+                      <div className="flex justify-between w-full text-base">
+                        <span># - {stats.trees.toLocaleString()}</span>
+                        <span>
+                          ha - {stats.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })} ha
+                        </span>
+                      </div>
                     </div>
-                    <div className="text-xs text-right text-white/70">Progress: {percent}%</div>
+
+                    <div className="text-xs text-right text-white/70 mt-1">Progress: {percent}%</div>
                   </div>
                 </div>
               );
