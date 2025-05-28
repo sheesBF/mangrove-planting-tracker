@@ -97,43 +97,34 @@ function Tracking() {
         <div className="flex flex-col items-center justify-center min-h-screen pt-20 gap-12">
           {/* Project 1 Button */}
           <div className="relative w-[700px] max-w-[95vw] px-6 py-6 text-white bg-sky-500/80 backdrop-blur-sm hover:bg-sky-400/90 rounded-2xl shadow-xl overflow-hidden transition-all duration-300 transform hover:scale-105">
-            {/* Wave background */}
             <div
               className="absolute bottom-0 left-0 w-full overflow-hidden z-0"
               style={{ height: `${projectPercent}%` }}
             >
               <div className="relative w-[200%] h-full animate-waveMotion">
-                <svg
-                  className="absolute top-0 left-0 w-full h-full"
-                  viewBox="0 0 1440 320"
-                  preserveAspectRatio="none"
-                >
-                  <path
-                    fill="rgba(255, 255, 255, 0.25)"
-                    d="M0,160L30,176C60,192,120,224,180,213.3C240,203,300,149,360,149.3C420,149,480,203,540,197.3C600,192,660,128,720,117.3C780,107,840,149,900,176C960,203,1020,213,1080,213.3C1140,213,1200,203,1260,197.3C1320,192,1380,192,1410,192L1440,192L1440,320L0,320Z"
-                  />
-                </svg>
-                <svg
-                  className="absolute top-0 left-[100%] w-full h-full"
-                  viewBox="0 0 1440 320"
-                  preserveAspectRatio="none"
-                >
-                  <path
-                    fill="rgba(255, 255, 255, 0.25)"
-                    d="M0,160L30,176C60,192,120,224,180,213.3C240,203,300,149,360,149.3C420,149,480,203,540,197.3C600,192,660,128,720,117.3C780,107,840,149,900,176C960,203,1020,213,1080,213.3C1140,213,1200,203,1260,197.3C1320,192,1380,192,1410,192L1440,192L1440,320L0,320Z"
-                  />
-                </svg>
+                {[0, 100].map((left, i) => (
+                  <svg
+                    key={i}
+                    className={`absolute top-0 ${left === 0 ? 'left-0' : 'left-[100%]'} w-full h-full`}
+                    viewBox="0 0 1440 320"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      fill="rgba(255, 255, 255, 0.25)"
+                      d="M0,160L30,176C60,192,120,224,180,213.3C240,203,300,149,360,149.3C420,149,480,203,540,197.3C600,192,660,128,720,117.3C780,107,840,149,900,176C960,203,1020,213,1080,213.3C1140,213,1200,203,1260,197.3C1320,192,1380,192,1410,192L1440,192L1440,320L0,320Z"
+                    />
+                  </svg>
+                ))}
               </div>
             </div>
 
-            {/* Foreground content */}
             <div className="relative z-10 flex flex-col items-center justify-between h-full">
               <div className="text-4xl font-bold mb-3">Project 1</div>
               <div className="text-sm font-medium">
                 <div className="text-center mb-1">Planted</div>
-                <div className="flex justify-between w-full text-base">
+                <div className="flex justify-between w-full text-base gap-6">
                   <span># - {projectTotals.trees.toLocaleString()}</span>
-                  <span>ha - {projectTotals.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })} ha</span>
+                  <span>area - {projectTotals.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })} ha</span>
                 </div>
               </div>
               <div className="text-xs text-right text-white/70 mt-1">Progress: {projectPercent}%</div>
@@ -159,26 +150,19 @@ function Tracking() {
                     style={{ height: `${percent}%` }}
                   >
                     <div className="relative w-[200%] h-full animate-waveMotion">
-                      <svg
-                        className="absolute top-0 left-0 w-full h-full"
-                        viewBox="0 0 1440 320"
-                        preserveAspectRatio="none"
-                      >
-                        <path
-                          fill="rgba(34, 197, 94, 0.4)"
-                          d="M0,160L30,176C60,192,120,224,180,213.3C240,203,300,149,360,149.3C420,149,480,203,540,197.3C600,192,660,128,720,117.3C780,107,840,149,900,176C960,203,1020,213,1080,213.3C1140,213,1200,203,1260,197.3C1320,192,1380,192,1410,192L1440,192L1440,320L0,320Z"
-                        />
-                      </svg>
-                      <svg
-                        className="absolute top-0 left-[100%] w-full h-full"
-                        viewBox="0 0 1440 320"
-                        preserveAspectRatio="none"
-                      >
-                        <path
-                          fill="rgba(34, 197, 94, 0.4)"
-                          d="M0,160L30,176C60,192,120,224,180,213.3C240,203,300,149,360,149.3C420,149,480,203,540,197.3C600,192,660,128,720,117.3C780,107,840,149,900,176C960,203,1020,213,1080,213.3C1140,213,1200,203,1260,197.3C1320,192,1380,192,1410,192L1440,192L1440,320L0,320Z"
-                        />
-                      </svg>
+                      {[0, 100].map((left, i) => (
+                        <svg
+                          key={i}
+                          className={`absolute top-0 ${left === 0 ? 'left-0' : 'left-[100%]'} w-full h-full`}
+                          viewBox="0 0 1440 320"
+                          preserveAspectRatio="none"
+                        >
+                          <path
+                            fill="rgba(34, 197, 94, 0.4)"
+                            d="M0,160L30,176C60,192,120,224,180,213.3C240,203,300,149,360,149.3C420,149,480,203,540,197.3C600,192,660,128,720,117.3C780,107,840,149,900,176C960,203,1020,213,1080,213.3C1140,213,1200,203,1260,197.3C1320,192,1380,192,1410,192L1440,192L1440,320L0,320Z"
+                          />
+                        </svg>
+                      ))}
                     </div>
                   </div>
 
@@ -188,7 +172,7 @@ function Tracking() {
                       <div className="text-center mb-1">Planted</div>
                       <div className="flex justify-between w-full text-base">
                         <span># - {stats.trees.toLocaleString()}</span>
-                        <span>ha - {stats.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })} ha</span>
+                        <span>area - {stats.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })} ha</span>
                       </div>
                     </div>
                     <div className="text-xs text-right text-white/70 mt-1">Progress: {percent}%</div>
