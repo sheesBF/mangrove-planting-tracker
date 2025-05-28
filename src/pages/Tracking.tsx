@@ -1,9 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Trees as Tree, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../services/supabaseClient';
+
+interface PhaseTotal {
+  phase_name: string;
+  total_planned_trees: number;
+  total_planned_hectares: number;
+  total_actual_trees: number;
+  total_actual_hectares: number;
+}
 
 function Tracking() {
   const navigate = useNavigate();
+  const [phaseTotals, setPhaseTotals] = useState<PhaseTotal[]>([]);
+
+  useEffect(() => {
+    async function fetchPhaseTotals() {
+      const { data, error } = await supabase
+        .from('phase_totals')
+        .select('*')
+        .order('phase_name');
+      if (!error && data) {
+        setPhaseTotals(data);
+      } else {
+        console.error('Error fetching phase totals:', error);
+      }
+    }
+
+    fetchPhaseTotals();
+  }, []);
+
+  const getPhaseStats = (phaseNum: number) => {
+    const phase = phaseTotals.find(p => p.phase_name === `Phase ${phaseNum}`);
+    return {
+      trees: phase?.total_actual_trees ?? 0,
+      hectares: phase?.total_actual_hectares ?? 0,
+    };
+  };
 
   return (
     <div className="min-h-screen bg-slate-900 text-white">
@@ -34,17 +68,24 @@ function Tracking() {
           Project 1
         </button>
 
-        {/* Phase Buttons */}
+        {/* Phase Buttons with stats */}
         <div className="flex flex-col md:flex-row gap-6">
-          {[1, 2, 3].map((num) => (
-            <button
-              key={num}
-              onClick={() => navigate(`/phase/${num}`)}
-              className="w-48 h-20 text-2xl font-semibold bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
-            >
-              Phase {num}
-            </button>
-          ))}
+          {[1, 2, 3].map((num) => {
+            const stats = getPhaseStats(num);
+            return (
+              <button
+                key={num}
+                onClick={() => navigate(`/phase/${num}`)}
+                className="w-60 h-32 p-4 text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 flex flex-col justify-between text-left"
+              >
+                <div className="text-2xl font-bold">Phase {num}</div>
+                <div className="text-sm">
+                  <p>Planted: <span className="font-medium">{stats.trees.toLocaleString()}</span></p>
+                  <p>Planted ha: <span className="font-medium">{stats.hectares.toLocaleString()}</span></p>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>
