@@ -14,7 +14,7 @@ const Header = () => {
       >
         <Trees className="h-6 w-6 text-emerald-400" />
         <h1 className="text-xl font-semibold tracking-tight hover:text-emerald-400 transition-colors">
-          Mangrove Planting Tracker
+          MozBlue Planting Tracker
         </h1>
       </div>
     </header>
