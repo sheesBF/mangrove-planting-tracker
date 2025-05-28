@@ -26,6 +26,7 @@ function Tracking() {
       if (error) {
         console.error('Error fetching phase totals:', error);
       } else {
+        console.log('Fetched phase_totals:', data);
         setPhaseTotals(data || []);
       }
 
@@ -36,13 +37,17 @@ function Tracking() {
   }, []);
 
   const getPhaseStats = (phaseNum: number) => {
-    const phase = phaseTotals.find(
-      (p) => p.phase_name?.toLowerCase().trim() === `phase ${phaseNum}`
+    const phase = phaseTotals.find((p) =>
+      p.phase_name?.toLowerCase().includes(`phase ${phaseNum}`)
     );
-    return {
+
+    const stats = {
       trees: phase?.total_actual_trees ?? 0,
       hectares: phase?.total_actual_hectares ?? 0,
     };
+
+    console.log('Matching Phase:', phaseNum, '→', phase?.phase_name, stats);
+    return stats;
   };
 
   return (
@@ -64,7 +69,7 @@ function Tracking() {
         </div>
       </header>
 
-      {/* Wait until data is ready */}
+      {/* Wait for data */}
       {isLoading ? (
         <div className="flex items-center justify-center h-screen">
           <div className="text-white">Loading...</div>
@@ -79,7 +84,7 @@ function Tracking() {
             Project 1
           </button>
 
-          {/* Phase Buttons with stats */}
+          {/* Phase Buttons */}
           <div className="flex flex-col md:flex-row gap-6">
             {[1, 2, 3].map((num) => {
               const stats = getPhaseStats(num);
