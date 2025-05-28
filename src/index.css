@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 🌊 Dark Coastal Background Styling */
+body {
+  @apply font-sans text-white bg-slate-900;
+  background-image: url('/coastal-texture-dark.png');
+  background-repeat: repeat;
+  background-size: contain;
+  background-blend-mode: overlay;
+}
+
+/* Heading Typography */
+h1, h2, h3 {
+  @apply font-bold tracking-tight text-white;
+}
+
+/* Metadata and small text */
+small,
+.meta {
+  @apply text-xs uppercase tracking-wider text-slate-400;
+}
