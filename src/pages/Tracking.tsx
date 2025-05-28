@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Trees as Tree, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -77,7 +78,7 @@ function Tracking() {
         <div className="absolute w-full h-full [backface-visibility:hidden]">
           {front}
         </div>
-        <div className="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] flex items-center justify-center text-white text-lg font-semibold bg-emerald-600/80 rounded-2xl">
+        <div className="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] flex items-center justify-center text-white text-lg font-semibold bg-slate-800/90 rounded-2xl">
           Monthly data and charts
         </div>
       </div>
@@ -85,8 +86,8 @@ function Tracking() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
-      <header className="fixed top-0 left-0 right-0 z-10 bg-gradient-to-b from-slate-900/90 to-transparent">
+    <div className="min-h-screen bg-slate-900 text-white font-sans">
+      <header className="fixed top-0 left-0 right-0 z-10 bg-slate-900/90">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <Tree className="h-6 w-6 text-emerald-400" />
@@ -112,7 +113,7 @@ function Tracking() {
           <div className="w-[700px] max-w-[95vw] h-48">
             <FlipCard
               front={
-                <div className="relative w-full h-full px-6 py-6 text-white bg-sky-500/80 backdrop-blur-sm hover:bg-sky-400/90 rounded-2xl shadow-xl overflow-hidden">
+                <div className="relative w-full h-full px-6 py-6 text-white bg-emerald-800/60 backdrop-blur-sm hover:bg-emerald-700/80 rounded-2xl shadow-xl overflow-hidden">
                   <div
                     className="absolute bottom-0 left-0 w-full overflow-hidden z-0"
                     style={{ height: `${projectPercent}%` }}
@@ -133,19 +134,14 @@ function Tracking() {
                       ))}
                     </div>
                   </div>
+
                   <div className="relative z-10 flex flex-col items-center justify-between h-full">
                     <div className="text-4xl font-bold mb-3">Project 1</div>
                     <div className="text-sm font-medium">
                       <div className="text-center mb-1">Planted</div>
                       <div className="flex justify-between w-full text-base gap-6">
                         <span># - {projectTotals.trees.toLocaleString()}</span>
-                        <span>
-                          area -{' '}
-                          {projectTotals.hectares.toLocaleString(undefined, {
-                            maximumFractionDigits: 2,
-                          })}{' '}
-                          ha
-                        </span>
+                        <span>area - {projectTotals.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })} ha</span>
                       </div>
                     </div>
                     <div className="text-xs text-right text-white/70 mt-1">Progress: {projectPercent}%</div>
@@ -169,7 +165,7 @@ function Tracking() {
                 <div key={num} className="w-72 h-48">
                   <FlipCard
                     front={
-                      <div className="relative w-full h-full px-6 py-5 text-white bg-emerald-600/20 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
+                      <div className="relative w-full h-full px-6 py-5 text-white bg-slate-800/60 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden">
                         <div
                           className="absolute bottom-0 left-0 w-full overflow-hidden z-0"
                           style={{ height: `${percent}%` }}
@@ -190,18 +186,14 @@ function Tracking() {
                             ))}
                           </div>
                         </div>
+
                         <div className="relative z-10 flex flex-col h-full justify-between">
                           <div className="text-3xl font-bold text-center">Phase {num}</div>
                           <div className="text-sm font-medium">
                             <div className="text-center mb-1">Planted</div>
                             <div className="flex justify-between w-full text-base">
                               <span># - {stats.trees.toLocaleString()}</span>
-                              <span>
-                                area - {stats.hectares.toLocaleString(undefined, {
-                                  maximumFractionDigits: 2,
-                                })}{' '}
-                                ha
-                              </span>
+                              <span>area - {stats.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })} ha</span>
                             </div>
                           </div>
                           <div className="text-xs text-right text-white/70 mt-1">Progress: {percent}%</div>
