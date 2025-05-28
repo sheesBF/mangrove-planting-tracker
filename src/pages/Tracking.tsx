@@ -90,22 +90,10 @@ function Tracking() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white font-sans">
-      <header className="fixed top-0 left-0 right-0 z-10 bg-slate-900/90">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <Tree className="h-6 w-6 text-emerald-400" />
-            <h1 className="text-xl font-semibold tracking-tight">Mangrove Planting Tracker</h1>
-          </div>
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center space-x-2 text-emerald-400 hover:text-emerald-300 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back to Home</span>
-          </button>
-        </div>
-      </header>
+  <div className="min-h-screen bg-slate-900 text-white font-sans">
+    <Header />
+
+    <div className="pt-20">
 
       {isLoading ? (
         <div className="flex items-center justify-center h-screen">
