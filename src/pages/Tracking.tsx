@@ -62,13 +62,32 @@ function Tracking() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 pt-24 pb-12">
+      {/* Phase buttons */}
+      <div className="container mx-auto px-4 pt-28 pb-4">
+        <div className="flex gap-4 justify-center">
+          {[1, 2, 3].map((num) => (
+            <button
+              key={num}
+              onClick={() => navigate(`/phase/${num}`)}
+              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg shadow-md transition-all duration-200"
+            >
+              Phase {num}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Phase total cards */}
+      <div className="container mx-auto px-4 pb-12">
         <div className="grid gap-6">
           {phaseTotals.map((phase) => (
             <div
               key={phase.phase_name}
               className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm border border-slate-700/50 hover:bg-slate-700/50 transition-all duration-300 cursor-pointer"
-              onClick={() => navigate(`/phase/${phase.phase_name.split(' ')[1]}`)}
+              onClick={() => {
+                const parts = phase.phase_name?.split(' ');
+                if (parts?.length > 1) navigate(`/phase/${parts[1]}`);
+              }}
             >
               <h3 className="text-xl font-semibold mb-4">{phase.phase_name}</h3>
               <div className="grid grid-cols-2 gap-6">
