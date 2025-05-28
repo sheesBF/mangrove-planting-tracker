@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Tracking from './pages/Tracking';
+import MonthlyData from './pages/MonthlyData';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           </div>
         } />
         <Route path="/tracking" element={<Tracking />} />
+         <Route path="/phase/:id" element={<MonthlyData />} />
       </Routes>
     </Router>
   );
