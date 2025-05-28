@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       animation: {
-        wave: 'waveMotion 6s linear infinite',
+        waveMotion: 'waveMotion 6s linear infinite',
       },
       keyframes: {
         waveMotion: {
