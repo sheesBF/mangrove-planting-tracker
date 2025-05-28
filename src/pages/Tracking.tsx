@@ -63,19 +63,19 @@ function Tracking() {
       </header>
 
       {/* Phase buttons */}
-      <div className="container mx-auto px-4 pt-28 pb-4">
-        <div className="flex gap-4 justify-center">
-          {[1, 2, 3].map((num) => (
-            <button
-              key={num}
-              onClick={() => navigate(`/phase/${num}`)}
-              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg shadow-md transition-all duration-200"
-            >
-              Phase {num}
-            </button>
-          ))}
-        </div>
-      </div>
+      <div className="flex items-center justify-center pt-32 pb-12">
+  <div className="flex flex-col md:flex-row gap-6">
+    {[1, 2, 3].map((num) => (
+      <button
+        key={num}
+        onClick={() => navigate(`/phase/${num}`)}
+        className="w-48 h-20 text-2xl font-semibold bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
+      >
+        Phase {num}
+      </button>
+    ))}
+  </div>
+</div>
 
       {/* Phase total cards */}
       <div className="container mx-auto px-4 pb-12">
