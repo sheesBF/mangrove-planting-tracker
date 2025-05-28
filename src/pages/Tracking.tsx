@@ -50,6 +50,22 @@ function Tracking() {
     return stats;
   };
 
+  const getProjectTotals = () => {
+    const totals = phaseTotals.reduce(
+      (acc, phase) => {
+        acc.trees += phase.total_actual_trees || 0;
+        acc.hectares += phase.total_actual_hectares || 0;
+        return acc;
+      },
+      { trees: 0, hectares: 0 }
+    );
+
+    return {
+      trees: totals.trees,
+      hectares: totals.hectares,
+    };
+  };
+
   return (
     <div className="min-h-screen bg-slate-900 text-white">
       {/* Header */}
@@ -76,13 +92,31 @@ function Tracking() {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center min-h-screen pt-20 gap-8">
-          {/* Project Button */}
-          <button
-            onClick={() => navigate('/project/1')}
-            className="w-[624px] max-w-[90vw] h-24 text-3xl font-bold bg-sky-500 hover:bg-sky-400 text-white rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
-          >
-            Project 1
-          </button>
+          {/* Project Button with totals */}
+          <div className="flex flex-col items-center">
+            <button
+              onClick={() => navigate('/project/1')}
+              className="w-[624px] max-w-[90vw] h-24 text-3xl font-bold bg-sky-500 hover:bg-sky-400 text-white rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
+            >
+              Project 1
+            </button>
+            <div className="mt-2 text-white text-center text-sm">
+              <p>
+                Total Planted:{' '}
+                <span className="font-semibold">
+                  {getProjectTotals().trees.toLocaleString()}
+                </span>
+              </p>
+              <p>
+                Total Planted ha:{' '}
+                <span className="font-semibold">
+                  {getProjectTotals().hectares.toLocaleString(undefined, {
+                    maximumFractionDigits: 2,
+                  })}
+                </span>
+              </p>
+            </div>
+          </div>
 
           {/* Phase Buttons */}
           <div className="flex flex-col md:flex-row gap-6">
@@ -96,8 +130,20 @@ function Tracking() {
                 >
                   <div className="text-2xl font-bold">Phase {num}</div>
                   <div className="text-sm">
-                    <p>Planted: <span className="font-medium">{stats.trees.toLocaleString()}</span></p>
-                    <p>Planted ha: <span className="font-medium">{stats.hectares.toLocaleString()}</span></p>
+                    <p>
+                      Planted:{' '}
+                      <span className="font-medium">
+                        {stats.trees.toLocaleString()}
+                      </span>
+                    </p>
+                    <p>
+                      Planted ha:{' '}
+                      <span className="font-medium">
+                        {stats.hectares.toLocaleString(undefined, {
+                          maximumFractionDigits: 2,
+                        })}
+                      </span>
+                    </p>
                   </div>
                 </button>
               );
