@@ -72,10 +72,12 @@ function Tracking() {
   ).toFixed(0);
 
   const FlipCard = ({ front, back }: { front: React.ReactNode; back: React.ReactNode }) => (
-    <div className="group perspective w-full h-full">
-      <div className="relative preserve-3d w-full h-full transition-transform duration-700 group-hover:rotate-y-180">
-        <div className="absolute w-full h-full backface-hidden">{front}</div>
-        <div className="absolute w-full h-full backface-hidden rotate-y-180 flex items-center justify-center text-white text-lg font-semibold bg-emerald-600/80 rounded-2xl">
+    <div className="group [perspective:1000px] w-full h-full">
+      <div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+        <div className="absolute w-full h-full [backface-visibility:hidden]">
+          {front}
+        </div>
+        <div className="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] flex items-center justify-center text-white text-lg font-semibold bg-emerald-600/80 rounded-2xl">
           Monthly data and charts
         </div>
       </div>
@@ -131,14 +133,19 @@ function Tracking() {
                       ))}
                     </div>
                   </div>
-
                   <div className="relative z-10 flex flex-col items-center justify-between h-full">
                     <div className="text-4xl font-bold mb-3">Project 1</div>
                     <div className="text-sm font-medium">
                       <div className="text-center mb-1">Planted</div>
                       <div className="flex justify-between w-full text-base gap-6">
                         <span># - {projectTotals.trees.toLocaleString()}</span>
-                        <span>area - {projectTotals.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })} ha</span>
+                        <span>
+                          area -{' '}
+                          {projectTotals.hectares.toLocaleString(undefined, {
+                            maximumFractionDigits: 2,
+                          })}{' '}
+                          ha
+                        </span>
                       </div>
                     </div>
                     <div className="text-xs text-right text-white/70 mt-1">Progress: {projectPercent}%</div>
@@ -183,14 +190,18 @@ function Tracking() {
                             ))}
                           </div>
                         </div>
-
                         <div className="relative z-10 flex flex-col h-full justify-between">
                           <div className="text-3xl font-bold text-center">Phase {num}</div>
                           <div className="text-sm font-medium">
                             <div className="text-center mb-1">Planted</div>
                             <div className="flex justify-between w-full text-base">
                               <span># - {stats.trees.toLocaleString()}</span>
-                              <span>area - {stats.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })} ha</span>
+                              <span>
+                                area - {stats.hectares.toLocaleString(undefined, {
+                                  maximumFractionDigits: 2,
+                                })}{' '}
+                                ha
+                              </span>
                             </div>
                           </div>
                           <div className="text-xs text-right text-white/70 mt-1">Progress: {percent}%</div>
