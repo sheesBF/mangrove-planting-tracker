@@ -24,8 +24,8 @@ function Tracking() {
         </div>
       </header>
 
-      {/* Phase buttons */}
-      <div className="flex items-center justify-center pt-32 pb-12">
+      {/* Centered Phase buttons */}
+      <div className="flex items-center justify-center min-h-screen pt-20">
         <div className="flex flex-col md:flex-row gap-6">
           {[1, 2, 3].map((num) => (
             <button
