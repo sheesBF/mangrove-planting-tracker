@@ -12,6 +12,12 @@ import dayjs from 'dayjs';
 
 Chart.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
 
+// Force animation even if prefers-reduced-motion is on
+Chart.defaults.animation = {
+  duration: 2000,
+  easing: 'easeOutQuart',
+};
+
 const Project1MonthlyData = () => {
   const navigate = useNavigate();
   const [labels, setLabels] = useState<string[]>([]);
@@ -33,7 +39,7 @@ const Project1MonthlyData = () => {
       legend: {
         labels: {
           color: '#fff',
-          usePointStyle: true,
+          usePointStyle: false
         }
       },
       tooltip: {
@@ -162,7 +168,7 @@ const Project1MonthlyData = () => {
   };
 
   return (
-    <div className="min-h-screen animate-bg-pulse bg-slate-900 text-white font-sans px-6 py-12">
+    <div className="min-h-screen bg-slate-900 text-white font-sans px-6 py-12">
       <div className="flex justify-between items-center mb-10">
         <h1 className="text-3xl font-bold">Project 1 – Monthly Tree Data</h1>
         <button
