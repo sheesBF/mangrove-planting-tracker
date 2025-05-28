@@ -127,7 +127,7 @@ function Tracking() {
                 </div>
               }
               back={
-                <div onClick={() => navigate('/phase/1')}>
+                <div onClick={() => navigate('/project/1')}>
                   Monthly data and charts
                 </div>
               }
