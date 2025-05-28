@@ -1,108 +1,100 @@
-
-import { motion } from "framer-motion";
+import React from "react";
 import {
   LineChart,
   Line,
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
   ResponsiveContainer,
+  Legend,
+  CartesianGrid,
 } from "recharts";
-import { useTheme } from "../hooks/useTheme";
-import { useState } from "react";
+
+interface DataPoint {
+  name: string;
+  value: number;
+}
+
+interface ChartDataSet {
+  name: string;
+  color: string;
+  data: DataPoint[];
+}
 
 interface MultiLineChartCardProps {
   title: string;
-  data: {
-    labels: string[];
-    datasets: { label: string; data: number[]; borderColor: string }[];
-  };
+  subtitle?: string;
+  theme?: "light" | "dark";
+  data: ChartDataSet[];
 }
 
-const MultiLineChartCard = ({ title, data }: MultiLineChartCardProps) => {
-  const { theme } = useTheme();
-  const [visibleLines, setVisibleLines] = useState(() =>
-    Object.fromEntries(data.datasets.map((ds) => [ds.label, true]))
-  );
+export const MultiLineChartCard: React.FC<MultiLineChartCardProps> = ({
+  title,
+  subtitle,
+  theme = "light",
+  data,
+}) => {
+  const mergedData = data[0]?.data.map((_, index) => {
+    const obj: { name: string; [key: string]: number | string } = {
+      name: data[0].data[index].name,
+    };
 
-  const toggleLine = (label: string) => {
-    setVisibleLines((prev) => ({ ...prev, [label]: !prev[label] }));
-  };
-
-  const chartData = data.labels.map((label, i) => {
-    const row: any = { name: label };
-    data.datasets.forEach((ds) => {
-      row[ds.label] = ds.data[i];
+    data.forEach((line) => {
+      obj[line.name] = line.data[index]?.value ?? 0;
     });
-    return row;
-  });
+
+    return obj;
+  }) || [];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className={`glass-card animated-background ${theme === "light" ? "bg-white/80 border-slate-200" : ""} p-6 h-[300px]`}
+    <div
+      className={`rounded-2xl p-6 shadow-lg border border-white/10 backdrop-blur bg-white/5 text-white transition-all duration-500`}
     >
-      <h3 className="text-white font-semibold mb-4">{title}</h3>
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={chartData}>
-          <XAxis dataKey="name" tick={{ fill: "#ccc", fontSize: 12 }} />
-          <YAxis tick={{ fill: "#ccc", fontSize: 12 }} />
+      <div className="mb-4">
+        <h3 className="text-lg font-semibold">{title}</h3>
+        {subtitle && <p className="text-sm text-white/60">{subtitle}</p>}
+      </div>
+
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={mergedData}>
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+          <XAxis dataKey="name" stroke="#ccc" />
+          <YAxis stroke="#ccc" />
           <Tooltip
             contentStyle={{
-              backgroundColor: "rgba(30, 41, 59, 0.8)",
-              border: "1px solid #ccc",
+              backgroundColor: "rgba(0,0,0,0.6)",
+              border: "none",
               borderRadius: "8px",
-              fontSize: "12px",
+              color: "#fff",
             }}
-            labelStyle={{ color: "#f1f5f9" }}
           />
           <Legend
-            content={({ payload }) => (
-              <ul className="flex gap-4 text-sm mt-2">
-                {payload?.map((entry, index) => (
-                  <li
-                    key={`legend-${index}`}
-                    onClick={() => toggleLine(entry.value)}
-                    className={`flex items-center gap-2 cursor-pointer ${
-                      visibleLines[entry.value] ? "" : "opacity-40"
-                    }`}
-                  >
-                    <svg width="24" height="8">
-                      <line
-                        x1="0"
-                        y1="4"
-                        x2="24"
-                        y2="4"
-                        stroke={entry.color}
-                        strokeWidth="2"
-                      />
-                    </svg>
-                    <span>{entry.value}</span>
-                  </li>
-                ))}
-              </ul>
+            formatter={(value, entry) => (
+              <span
+                style={{
+                  display: "inline-block",
+                  width: 12,
+                  height: 3,
+                  backgroundColor: entry.color,
+                  marginRight: 8,
+                  verticalAlign: "middle",
+                }}
+              />
             )}
           />
-          {data.datasets.map(
-            (ds) =>
-              visibleLines[ds.label] && (
-                <Line
-                  key={ds.label}
-                  type="monotone"
-                  dataKey={ds.label}
-                  stroke={ds.borderColor}
-                  strokeWidth={2}
-                  dot={{ stroke: ds.borderColor, strokeWidth: 2 }}
-                />
-              )
-          )}
+          {data.map((line, idx) => (
+            <Line
+              key={idx}
+              type="monotone"
+              dataKey={line.name}
+              stroke={line.color}
+              strokeWidth={2}
+              dot={{ stroke: line.color, fill: line.color, r: 4 }}
+              isAnimationActive={true}
+            />
+          ))}
         </LineChart>
       </ResponsiveContainer>
-    </motion.div>
+    </div>
   );
 };
-
-export default MultiLineChartCard;
