@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Trees as Tree, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
-import Header from "../components/Header"; 
-
-<Header />
-
-
+import Header from "../components/Header";
 
 interface PhaseTotal {
   phase_name: string;
@@ -90,17 +85,15 @@ function Tracking() {
   );
 
   return (
-  <div className="min-h-screen bg-slate-900 text-white font-sans">
-    <Header />
-
-    <div className="pt-20">
+    <div className="min-h-screen bg-slate-900 text-white font-sans">
+      <Header />
 
       {isLoading ? (
         <div className="flex items-center justify-center h-screen">
           <div className="text-white">Loading...</div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center min-h-screen pt-20 gap-12">
+        <div className="flex flex-col items-center justify-center min-h-screen pt-24 gap-12">
           {/* Project 1 Button */}
           <div className="w-[700px] max-w-[95vw] h-48">
             <FlipCard
