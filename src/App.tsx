@@ -6,6 +6,8 @@ import Tracking from './pages/Tracking';
 import Phase1MonthlyData from './pages/Phase1MonthlyData';
 import Phase2MonthlyData from './pages/Phase2MonthlyData';
 import Phase3MonthlyData from './pages/Phase3MonthlyData';
+import Project1MonthlyData from './pages/Project1MonthlyData';
+
 
 function App() {
   return (
@@ -21,6 +23,7 @@ function App() {
         <Route path="/phase/1" element={<Phase1MonthlyData />} />
         <Route path="/phase/2" element={<Phase2MonthlyData />} />
         <Route path="/phase/3" element={<Phase3MonthlyData />} />
+        <Route path="/project/1" element={<Project1MonthlyData />} />
       </Routes>
     </Router>
   );
