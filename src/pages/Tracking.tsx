@@ -71,6 +71,17 @@ function Tracking() {
     100
   ).toFixed(0);
 
+  const FlipCard = ({ front, back }: { front: React.ReactNode; back: React.ReactNode }) => (
+    <div className="group perspective w-full h-full">
+      <div className="relative preserve-3d w-full h-full transition-transform duration-700 group-hover:rotate-y-180">
+        <div className="absolute w-full h-full backface-hidden">{front}</div>
+        <div className="absolute w-full h-full backface-hidden rotate-y-180 flex items-center justify-center text-white text-lg font-semibold bg-emerald-600/80 rounded-2xl">
+          Monthly data and charts
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-slate-900 text-white">
       <header className="fixed top-0 left-0 right-0 z-10 bg-gradient-to-b from-slate-900/90 to-transparent">
@@ -96,39 +107,46 @@ function Tracking() {
       ) : (
         <div className="flex flex-col items-center justify-center min-h-screen pt-20 gap-12">
           {/* Project 1 Button */}
-          <div className="relative w-[700px] max-w-[95vw] px-6 py-6 text-white bg-sky-500/80 backdrop-blur-sm hover:bg-sky-400/90 rounded-2xl shadow-xl overflow-hidden transition-all duration-300 transform hover:scale-105">
-            <div
-              className="absolute bottom-0 left-0 w-full overflow-hidden z-0"
-              style={{ height: `${projectPercent}%` }}
-            >
-              <div className="relative w-[200%] h-full animate-waveMotion">
-                {[0, 100].map((left, i) => (
-                  <svg
-                    key={i}
-                    className={`absolute top-0 ${left === 0 ? 'left-0' : 'left-[100%]'} w-full h-full`}
-                    viewBox="0 0 1440 320"
-                    preserveAspectRatio="none"
+          <div className="w-[700px] max-w-[95vw] h-48">
+            <FlipCard
+              front={
+                <div className="relative w-full h-full px-6 py-6 text-white bg-sky-500/80 backdrop-blur-sm hover:bg-sky-400/90 rounded-2xl shadow-xl overflow-hidden">
+                  <div
+                    className="absolute bottom-0 left-0 w-full overflow-hidden z-0"
+                    style={{ height: `${projectPercent}%` }}
                   >
-                    <path
-                      fill="rgba(255, 255, 255, 0.25)"
-                      d="M0,160L30,176C60,192,120,224,180,213.3C240,203,300,149,360,149.3C420,149,480,203,540,197.3C600,192,660,128,720,117.3C780,107,840,149,900,176C960,203,1020,213,1080,213.3C1140,213,1200,203,1260,197.3C1320,192,1380,192,1410,192L1440,192L1440,320L0,320Z"
-                    />
-                  </svg>
-                ))}
-              </div>
-            </div>
+                    <div className="relative w-[200%] h-full animate-waveMotion">
+                      {[0, 100].map((left, i) => (
+                        <svg
+                          key={i}
+                          className={`absolute top-0 ${left === 0 ? 'left-0' : 'left-[100%]'} w-full h-full`}
+                          viewBox="0 0 1440 320"
+                          preserveAspectRatio="none"
+                        >
+                          <path
+                            fill="rgba(255, 255, 255, 0.25)"
+                            d="M0,160L30,176C60,192,120,224,180,213.3C240,203,300,149,360,149.3C420,149,480,203,540,197.3C600,192,660,128,720,117.3C780,107,840,149,900,176C960,203,1020,213,1080,213.3C1140,213,1200,203,1260,197.3C1320,192,1380,192,1410,192L1440,192L1440,320L0,320Z"
+                          />
+                        </svg>
+                      ))}
+                    </div>
+                  </div>
 
-            <div className="relative z-10 flex flex-col items-center justify-between h-full">
-              <div className="text-4xl font-bold mb-3">Project 1</div>
-              <div className="text-sm font-medium">
-                <div className="text-center mb-1">Planted</div>
-                <div className="flex justify-between w-full text-base gap-6">
-                  <span># - {projectTotals.trees.toLocaleString()}</span>
-                  <span>area - {projectTotals.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })} ha</span>
+                  <div className="relative z-10 flex flex-col items-center justify-between h-full">
+                    <div className="text-4xl font-bold mb-3">Project 1</div>
+                    <div className="text-sm font-medium">
+                      <div className="text-center mb-1">Planted</div>
+                      <div className="flex justify-between w-full text-base gap-6">
+                        <span># - {projectTotals.trees.toLocaleString()}</span>
+                        <span>area - {projectTotals.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })} ha</span>
+                      </div>
+                    </div>
+                    <div className="text-xs text-right text-white/70 mt-1">Progress: {projectPercent}%</div>
+                  </div>
                 </div>
-              </div>
-              <div className="text-xs text-right text-white/70 mt-1">Progress: {projectPercent}%</div>
-            </div>
+              }
+              back={<></>}
+            />
           </div>
 
           {/* Phase Buttons */}
@@ -141,42 +159,46 @@ function Tracking() {
               ).toFixed(0);
 
               return (
-                <div
-                  key={num}
-                  className="relative w-72 h-48 px-6 py-5 text-white bg-emerald-600/20 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden transition-all duration-300 transform hover:scale-105"
-                >
-                  <div
-                    className="absolute bottom-0 left-0 w-full overflow-hidden z-0"
-                    style={{ height: `${percent}%` }}
-                  >
-                    <div className="relative w-[200%] h-full animate-waveMotion">
-                      {[0, 100].map((left, i) => (
-                        <svg
-                          key={i}
-                          className={`absolute top-0 ${left === 0 ? 'left-0' : 'left-[100%]'} w-full h-full`}
-                          viewBox="0 0 1440 320"
-                          preserveAspectRatio="none"
+                <div key={num} className="w-72 h-48">
+                  <FlipCard
+                    front={
+                      <div className="relative w-full h-full px-6 py-5 text-white bg-emerald-600/20 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
+                        <div
+                          className="absolute bottom-0 left-0 w-full overflow-hidden z-0"
+                          style={{ height: `${percent}%` }}
                         >
-                          <path
-                            fill="rgba(34, 197, 94, 0.4)"
-                            d="M0,160L30,176C60,192,120,224,180,213.3C240,203,300,149,360,149.3C420,149,480,203,540,197.3C600,192,660,128,720,117.3C780,107,840,149,900,176C960,203,1020,213,1080,213.3C1140,213,1200,203,1260,197.3C1320,192,1380,192,1410,192L1440,192L1440,320L0,320Z"
-                          />
-                        </svg>
-                      ))}
-                    </div>
-                  </div>
+                          <div className="relative w-[200%] h-full animate-waveMotion">
+                            {[0, 100].map((left, i) => (
+                              <svg
+                                key={i}
+                                className={`absolute top-0 ${left === 0 ? 'left-0' : 'left-[100%]'} w-full h-full`}
+                                viewBox="0 0 1440 320"
+                                preserveAspectRatio="none"
+                              >
+                                <path
+                                  fill="rgba(34, 197, 94, 0.4)"
+                                  d="M0,160L30,176C60,192,120,224,180,213.3C240,203,300,149,360,149.3C420,149,480,203,540,197.3C600,192,660,128,720,117.3C780,107,840,149,900,176C960,203,1020,213,1080,213.3C1140,213,1200,203,1260,197.3C1320,192,1380,192,1410,192L1440,192L1440,320L0,320Z"
+                                />
+                              </svg>
+                            ))}
+                          </div>
+                        </div>
 
-                  <div className="relative z-10 flex flex-col h-full justify-between">
-                    <div className="text-3xl font-bold text-center">Phase {num}</div>
-                    <div className="text-sm font-medium">
-                      <div className="text-center mb-1">Planted</div>
-                      <div className="flex justify-between w-full text-base">
-                        <span># - {stats.trees.toLocaleString()}</span>
-                        <span>area - {stats.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })} ha</span>
+                        <div className="relative z-10 flex flex-col h-full justify-between">
+                          <div className="text-3xl font-bold text-center">Phase {num}</div>
+                          <div className="text-sm font-medium">
+                            <div className="text-center mb-1">Planted</div>
+                            <div className="flex justify-between w-full text-base">
+                              <span># - {stats.trees.toLocaleString()}</span>
+                              <span>area - {stats.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })} ha</span>
+                            </div>
+                          </div>
+                          <div className="text-xs text-right text-white/70 mt-1">Progress: {percent}%</div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="text-xs text-right text-white/70 mt-1">Progress: {percent}%</div>
-                  </div>
+                    }
+                    back={<></>}
+                  />
                 </div>
               );
             })}
