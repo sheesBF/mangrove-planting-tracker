@@ -39,14 +39,20 @@ const Project1MonthlyData = () => {
       legend: {
         labels: {
           color: '#fff',
-          usePointStyle: false
+          usePointStyle: false,
+          generateLabels: (chart) => {
+            const datasets = chart.data.datasets;
+            return datasets.map((dataset, i) => ({
+              text: dataset.label,
+              strokeStyle: dataset.borderColor,
+              lineWidth: 2,
+              hidden: !chart.isDatasetVisible(i),
+              index: i,
+            }));
+          }
         }
       },
-      tooltip: {
-        mode: 'index',
-        intersect: false,
-      },
-    },
+    }
     scales: {
       x: {
         ticks: { color: '#ccc' },
