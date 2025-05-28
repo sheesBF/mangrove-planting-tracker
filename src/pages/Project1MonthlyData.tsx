@@ -52,7 +52,7 @@ const Project1MonthlyData = () => {
           }
         }
       },
-    }
+    },
     scales: {
       x: {
         ticks: { color: '#ccc' },
