@@ -2,34 +2,30 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { Line } from 'react-chartjs-2';
+import { Chart, LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend } from 'chart.js';
 import { supabase } from '../services/supabaseClient';
 import dayjs from 'dayjs';
 
-interface MonthlyData {
-  month: string;
-  planned_trees: number;
-  planned_hectares: number;
-  actual_trees: number;
-  actual_hectares: number;
-}
+Chart.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
 
 const Project1MonthlyData = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState<MonthlyData[]>([]);
   const [selectedMonth, setSelectedMonth] = useState('');
   const [monthList, setMonthList] = useState<string[]>([]);
+  const [labels, setLabels] = useState<string[]>([]);
+  const [plannedTrees, setPlannedTrees] = useState<number[]>([]);
+  const [actualTrees, setActualTrees] = useState<number[]>([]);
 
   useEffect(() => {
     const months: string[] = [];
     const start = dayjs('2024-11-01');
     const end = dayjs('2026-12-01');
-
     let current = start;
     while (current.isBefore(end) || current.isSame(end)) {
       months.push(current.format('MMMM YYYY'));
       current = current.add(1, 'month');
     }
-
     const lastMonth = dayjs().subtract(1, 'month').format('MMMM YYYY');
     setMonthList(months);
     setSelectedMonth(lastMonth);
@@ -38,48 +34,111 @@ const Project1MonthlyData = () => {
   useEffect(() => {
     async function fetchAllData() {
       const phaseTables = ['phase1_monthly_data', 'phase2_monthly_data', 'phase3_monthly_data'];
-      const queries = await Promise.all(
-        phaseTables.map((table) =>
-          supabase
-            .from(table)
-            .select('*')
-            .eq('month', dayjs(selectedMonth).format('YYYY-MM-01'))
-        )
-      );
+      const months: string[] = [];
+      const start = dayjs('2024-11-01');
+      const end = dayjs('2026-12-01');
+      let current = start;
 
-      const combined = queries
-        .flatMap(({ data }) => data || [])
-        .reduce(
-          (acc, entry) => {
-            acc.planned_trees += entry.planned_trees || 0;
-            acc.planned_hectares += parseFloat(entry.planned_hectares || 0);
-            acc.actual_trees += entry.actual_trees || 0;
-            acc.actual_hectares += parseFloat(entry.actual_hectares || 0);
-            return acc;
-          },
-          {
-            month: selectedMonth,
-            planned_trees: 0,
-            planned_hectares: 0,
-            actual_trees: 0,
-            actual_hectares: 0
-          }
+      const labelList: string[] = [];
+      const planned: number[] = [];
+      const actual: number[] = [];
+
+      while (current.isBefore(end) || current.isSame(end)) {
+        const monthLabel = current.format('MMMM YYYY');
+        const monthKey = current.format('YYYY-MM-01');
+
+        const queries = await Promise.all(
+          phaseTables.map((table) =>
+            supabase
+              .from(table)
+              .select('*')
+              .eq('month', monthKey)
+          )
         );
 
-      setData([combined]);
+        const combined = queries
+          .flatMap(({ data }) => data || [])
+          .reduce(
+            (acc, entry) => {
+              acc.planned_trees += entry.planned_trees || 0;
+              acc.actual_trees += entry.actual_trees || 0;
+              return acc;
+            },
+            { planned_trees: 0, actual_trees: 0 }
+          );
+
+        labelList.push(monthLabel);
+        planned.push(combined.planned_trees);
+        actual.push(combined.actual_trees);
+
+        current = current.add(1, 'month');
+      }
+
+      setLabels(labelList);
+      setPlannedTrees(planned);
+      setActualTrees(actual);
     }
 
-    if (selectedMonth) {
-      fetchAllData();
-    }
-  }, [selectedMonth]);
+    fetchAllData();
+  }, []);
 
-  const stats = data[0];
+  const chartData = {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Planned Trees',
+        data: plannedTrees,
+        fill: false,
+        borderColor: 'rgba(255,255,255,0.6)',
+        backgroundColor: 'rgba(255,255,255,0.9)',
+        borderDash: [5, 5],
+        tension: 0.4,
+        pointRadius: 0,
+      },
+      {
+        label: 'Actual Trees',
+        data: actualTrees,
+        fill: false,
+        borderColor: 'rgba(34,197,94,1)',
+        backgroundColor: '#ffffff',
+        tension: 0.4,
+        pointBackgroundColor: '#ffffff',
+        pointRadius: 4,
+        pointHoverRadius: 6,
+      }
+    ]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: {
+          color: '#ffffff'
+        }
+      },
+      tooltip: {
+        mode: 'index',
+        intersect: false,
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: '#ccc' },
+        grid: { color: 'rgba(255,255,255,0.05)' }
+      },
+      y: {
+        ticks: { color: '#ccc' },
+        grid: { color: 'rgba(255,255,255,0.05)' }
+      }
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white font-sans px-6 py-12">
+    <div className="min-h-screen bg-slate-900 animate-bg-pulse text-white font-sans px-6 py-12">
       <div className="flex justify-between items-center mb-10">
-        <h1 className="text-3xl font-bold">Project 1 – Monthly Data</h1>
+        <h1 className="text-3xl font-bold">Project 1 – Monthly Tree Data</h1>
         <button
           onClick={() => navigate(-1)}
           className="text-emerald-400 hover:text-emerald-300 flex items-center space-x-2"
@@ -89,35 +148,12 @@ const Project1MonthlyData = () => {
         </button>
       </div>
 
-      <div className="mb-8">
-        <label className="block mb-2 font-medium">Select Month:</label>
-        <select
-          className="bg-slate-800 border border-slate-700 px-4 py-2 rounded text-white"
-          value={selectedMonth}
-          onChange={(e) => setSelectedMonth(e.target.value)}
-        >
-          {monthList.map((month) => (
-            <option key={month} value={month}>
-              {month}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-slate-800/60 p-6 rounded-xl shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">🌱 Planned</h2>
-            <p>Trees: {stats.planned_trees.toLocaleString()}</p>
-            <p>Area: {stats.planned_hectares.toFixed(2)} ha</p>
-          </div>
-          <div className="bg-slate-800/60 p-6 rounded-xl shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">🌿 Actual</h2>
-            <p>Trees: {stats.actual_trees.toLocaleString()}</p>
-            <p>Area: {stats.actual_hectares.toFixed(2)} ha</p>
-          </div>
+      <div className="glass rounded-xl shadow-xl p-6 bg-slate-800/40 backdrop-blur mb-10">
+        <h2 className="text-xl font-semibold mb-4">Planned vs Actual Tree Counts</h2>
+        <div className="w-full h-[400px]">
+          <Line data={chartData} options={chartOptions} />
         </div>
-      )}
+      </div>
     </div>
   );
 };
