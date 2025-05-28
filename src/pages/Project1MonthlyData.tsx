@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../services/supabaseClient";
 import { format, parseISO, subMonths } from "date-fns";
-import MultiLineChartCard from "../components/MultiLineChartCard";
-import BackgroundEffects from "../components/BackgroundEffects";
+import { MultiLineChartCard } from "../components/MultiLineChartCard";
+import { BackgroundEffects } from "../components/BackgroundEffects";
 
 interface MonthlyData {
   month: string;
