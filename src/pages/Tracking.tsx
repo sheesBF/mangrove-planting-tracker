@@ -26,7 +26,6 @@ function Tracking() {
       if (error) {
         console.error('Error fetching phase totals:', error);
       } else {
-        console.log('Fetched phase_totals:', data);
         setPhaseTotals(data || []);
       }
 
@@ -41,13 +40,10 @@ function Tracking() {
       p.phase_name?.toLowerCase().includes(`phase ${phaseNum}`)
     );
 
-    const stats = {
+    return {
       trees: phase?.total_actual_trees ?? 0,
       hectares: phase?.total_actual_hectares ?? 0,
     };
-
-    console.log('Matching Phase:', phaseNum, '→', phase?.phase_name, stats);
-    return stats;
   };
 
   const getProjectTotals = () => {
@@ -65,6 +61,8 @@ function Tracking() {
       hectares: totals.hectares,
     };
   };
+
+  const projectTotals = getProjectTotals();
 
   return (
     <div className="min-h-screen bg-slate-900 text-white">
@@ -85,65 +83,39 @@ function Tracking() {
         </div>
       </header>
 
-      {/* Wait for data */}
+      {/* Main Content */}
       {isLoading ? (
         <div className="flex items-center justify-center h-screen">
           <div className="text-white">Loading...</div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center min-h-screen pt-20 gap-8">
-          {/* Project Button with totals */}
-          <div className="flex flex-col items-center">
-            <button
-              onClick={() => navigate('/project/1')}
-              className="w-[624px] max-w-[90vw] h-24 text-3xl font-bold bg-sky-500 hover:bg-sky-400 text-white rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
-            >
-              Project 1
-            </button>
-            <div className="mt-2 text-white text-center text-sm">
-              <p>
-                Total Planted:{' '}
-                <span className="font-semibold">
-                  {getProjectTotals().trees.toLocaleString()}
-                </span>
-              </p>
-              <p>
-                Total Planted ha:{' '}
-                <span className="font-semibold">
-                  {getProjectTotals().hectares.toLocaleString(undefined, {
-                    maximumFractionDigits: 2,
-                  })}
-                </span>
-              </p>
+        <div className="flex flex-col items-center justify-center min-h-screen pt-20 gap-12">
+          {/* Project Button with totals inside */}
+          <button
+            onClick={() => navigate('/project/1')}
+            className="w-[700px] max-w-[95vw] px-10 py-8 text-white bg-sky-500/80 backdrop-blur-sm hover:bg-sky-400/90 rounded-2xl shadow-xl transition-all duration-300 transform hover:scale-105 text-center"
+          >
+            <div className="text-4xl font-bold mb-3">Project 1</div>
+            <div className="text-base font-medium space-y-1">
+              <p>Total Planted: {projectTotals.trees.toLocaleString()}</p>
+              <p>Total Planted ha: {projectTotals.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
             </div>
-          </div>
+          </button>
 
           {/* Phase Buttons */}
-          <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex flex-col md:flex-row gap-8">
             {[1, 2, 3].map((num) => {
               const stats = getPhaseStats(num);
               return (
                 <button
                   key={num}
                   onClick={() => navigate(`/phase/${num}`)}
-                  className="w-60 h-32 p-4 text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 flex flex-col justify-between text-left"
+                  className="w-72 h-40 p-5 text-white bg-emerald-600/80 backdrop-blur-sm hover:bg-emerald-500/90 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 flex flex-col justify-between text-left"
                 >
-                  <div className="text-2xl font-bold">Phase {num}</div>
-                  <div className="text-sm">
-                    <p>
-                      Planted:{' '}
-                      <span className="font-medium">
-                        {stats.trees.toLocaleString()}
-                      </span>
-                    </p>
-                    <p>
-                      Planted ha:{' '}
-                      <span className="font-medium">
-                        {stats.hectares.toLocaleString(undefined, {
-                          maximumFractionDigits: 2,
-                        })}
-                      </span>
-                    </p>
+                  <div className="text-3xl font-bold">Phase {num}</div>
+                  <div className="text-base space-y-1">
+                    <p>Planted: <span className="font-semibold">{stats.trees.toLocaleString()}</span></p>
+                    <p>Planted ha: <span className="font-semibold">{stats.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span></p>
                   </div>
                 </button>
               );
