@@ -20,22 +20,26 @@ const Project1MonthlyData = () => {
   const [plannedHectares, setPlannedHectares] = useState<number[]>([]);
   const [actualHectares, setActualHectares] = useState<number[]>([]);
   const [activeTab, setActiveTab] = useState<'chart' | 'table'>('chart');
+  const [renderKey, setRenderKey] = useState(0);
 
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     animation: {
       duration: 2000,
-      easing: 'easeInOutQuart'
+      easing: 'easeOutQuart',
     },
     plugins: {
       legend: {
-        labels: { color: '#fff' }
+        labels: {
+          color: '#fff',
+          usePointStyle: true,
+        }
       },
       tooltip: {
         mode: 'index',
         intersect: false,
-      }
+      },
     },
     scales: {
       x: {
@@ -173,7 +177,10 @@ const Project1MonthlyData = () => {
       <div className="flex gap-4 mb-6">
         <button
           className={`px-4 py-2 rounded-md border ${activeTab === 'chart' ? 'bg-white/10 border-white text-white' : 'border-gray-400 text-gray-300'}`}
-          onClick={() => setActiveTab('chart')}
+          onClick={() => {
+            setActiveTab('chart');
+            setRenderKey(prev => prev + 1);
+          }}
         >
           Show Chart
         </button>
@@ -190,14 +197,14 @@ const Project1MonthlyData = () => {
           <div className="glass rounded-xl shadow-xl p-6 bg-slate-800/40 backdrop-blur mb-10">
             <h2 className="text-xl font-semibold mb-4">Tree Counts</h2>
             <div className="w-full h-[400px]">
-              <Line data={treeData} options={chartOptions} />
+              <Line key={`tree-${renderKey}`} data={treeData} options={chartOptions} />
             </div>
           </div>
 
           <div className="glass rounded-xl shadow-xl p-6 bg-slate-800/40 backdrop-blur mb-10">
             <h2 className="text-xl font-semibold mb-4">Planted Area (ha)</h2>
             <div className="w-full h-[400px]">
-              <Line data={hectareData} options={chartOptions} />
+              <Line key={`area-${renderKey}`} data={hectareData} options={chartOptions} />
             </div>
           </div>
         </>
