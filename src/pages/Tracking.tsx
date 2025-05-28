@@ -43,6 +43,7 @@ function Tracking() {
     return {
       trees: phase?.total_actual_trees ?? 0,
       hectares: phase?.total_actual_hectares ?? 0,
+      plannedHectares: phase?.total_planned_hectares ?? 1,
     };
   };
 
@@ -90,7 +91,7 @@ function Tracking() {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center min-h-screen pt-20 gap-12">
-          {/* Project Button with totals inside */}
+          {/* Project Button */}
           <button
             onClick={() => navigate('/project/1')}
             className="w-[700px] max-w-[95vw] px-10 py-8 text-white bg-sky-500/80 backdrop-blur-sm hover:bg-sky-400/90 rounded-2xl shadow-xl transition-all duration-300 transform hover:scale-105 text-center"
@@ -106,18 +107,31 @@ function Tracking() {
           <div className="flex flex-col md:flex-row gap-8">
             {[1, 2, 3].map((num) => {
               const stats = getPhaseStats(num);
+              const percent = Math.min(
+                (stats.hectares / stats.plannedHectares) * 100,
+                100
+              ).toFixed(0);
+
               return (
-                <button
+                <div
                   key={num}
-                  onClick={() => navigate(`/phase/${num}`)}
-                  className="w-72 h-40 p-5 text-white bg-emerald-600/80 backdrop-blur-sm hover:bg-emerald-500/90 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 flex flex-col justify-between text-left"
+                  className="relative w-72 h-48 p-5 text-white bg-emerald-600/80 backdrop-blur-sm hover:bg-emerald-500/90 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 flex flex-col justify-between text-left overflow-hidden"
                 >
-                  <div className="text-3xl font-bold">Phase {num}</div>
-                  <div className="text-base space-y-1">
-                    <p>Planted: <span className="font-semibold">{stats.trees.toLocaleString()}</span></p>
-                    <p>Planted ha: <span className="font-semibold">{stats.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span></p>
+                  {/* Wave Progress Background */}
+                  <div
+                    className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-emerald-400/40 to-transparent animate-pulse"
+                    style={{ height: `${percent}%`, zIndex: 0 }}
+                  />
+
+                  <div className="relative z-10 flex flex-col h-full justify-between">
+                    <div className="text-3xl font-bold">Phase {num}</div>
+                    <div className="text-base font-medium whitespace-pre">
+                      Planted # - {stats.trees.toLocaleString()}{'\n'}
+                      {'        '}area - {stats.hectares.toLocaleString(undefined, { maximumFractionDigits: 2 })} ha
+                    </div>
+                    <div className="text-xs text-right text-white/70">Progress: {percent}%</div>
                   </div>
-                </button>
+                </div>
               );
             })}
           </div>
